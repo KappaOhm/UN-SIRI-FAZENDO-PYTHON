@@ -1,0 +1,12 @@
+** run bot even when closing the console
+nohup python3 -u un_siri_fazendo_python.py &
+
+** prints running processes to be able to stop the bot process
+ps -ef | grep python
+
+** install
+py -m pip install -U "discord.py[voice]"
+py -m pip install -U youtube-dl
+py -m pip install ffmpeg-python
+pip3 install requests
+pip install --upgrade chardet
