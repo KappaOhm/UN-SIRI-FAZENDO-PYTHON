@@ -63,6 +63,56 @@ LVLUP_MESSASGES =['¡Felicidades!🥳🎉`',
                   '¡Como lo mueve esa muchachota!💅`'
 ]
 
+
+BOMDIA_MESSASGES =['¡Hola Bom Día!⭐',
+                  'Eu gostaria que você pudesse desfrutar de um dia inesquecível. Com esta mensagem, eu não só lhe desejo um bom dia, mas também desejo que possamos nos ver o mais rapidamente possível, para que os segundos parem de parecer horas🐒',
+                  '🦄Problemas, trabalho, dificuldades, decepção … tudo ao seu lado parece uma miniatura, já que só penso em poder estar em seus braços para poder desfrutar do nosso amor juntos. Por esta razão, quero desejar-lhe a minha vida desde o primeiro minuto🦄',
+                  '🦀Obrigado por tornar cada despertar mais bonito que o anterior, bom dia a todos.🦀',
+                  '🐢Se eu não digo bom dia para você todos os dias, é como se eu estivesse perdendo alguma coisa na minha vida e eu não pudesse aproveitar o dia🐢',
+                  '🐒Se você quer ser feliz, você tem que fazer os outros felizes. E contanto que você faça isso feliz você será🐒',
+                  '🐸Ninguém é tão rico que não precise de um sorriso. Bom día🐸',
+                  '☀️Cada belo trabalho é construído lentamente. Bom día☀️',
+                  '🎃A vida é como uma lenda: não importa que seja longa, mas que seja bem contada',
+                  '🍉A felicidade não vem de fora, ela nasce de dentro🍉',
+                  '🌕Perseverança é muito importante para o sucesso. E se não se cansar de bater à porta com o necessário vigor e paciência, alguém a abrirá no final🌕',
+                  '🔮Seja paciente e não espere que tudo venha imediatamente🔮',
+                  '✨Se exageramos nossas alegrias, como fazemos com nossas tristezas, nossos problemas perderiam importância✨',
+                  '✨Se exageramos nossas alegrias, como fazemos com nossas tristezas, nossos problemas perderiam importância✨',
+                  '✨Se exageramos nossas alegrias, como fazemos com nossas tristezas, nossos problemas perderiam importância✨',
+                  '🍨Se um problema tiver uma solução, não há necessidade de se preocupar. Se não tiver solução, a preocupação não ajuda🍨',
+                  '🌺Ter sucesso é falhar repetidamente, mas sem perder o entusiasmo🌺',
+                  '🌱Seu tempo é limitado, então não o desperdice vivendo a vida de outra pessoa🌱',
+                  '🌈Se você pensa que pode ou se você pensa que não pode, de qualquer forma, você tem toda a razão🌈',
+                  '🌈Se você pensa que pode ou se você pensa que não pode, de qualquer forma, você tem toda a razão🌈',
+                  '🐋Você nunca pode atravessar o oceano até que você tenha coragem de perder de vista a costa🐋',
+                  '🍨O guerreiro de sucesso é um homem médio, mas com um foco apurado como um raio laser🍨',
+                  '🍉Tudo o que a mente humana pode conceber, ela pode conquistar🍉',
+                  '🌼Você não pode mudar o vento, mas pode pode ajustar as velas do barco para chegar onde quer🌼',
+                  '🐸E quando você pensar em desistir, lembre-se dos motivos que te fizeram aguentar até agora🐸',
+                  '🌺As dificultades incentivam a perseverança. A perseverança gera força. A força nos torna implacáveis. Nunca desista🌺'
+]
+
+BOMDIA_GIFS =['https://media.tenor.com/images/0c9d88ea6c328802517f38501aa77d64/tenor.gif',
+                'https://tenor.com/view/cute-anime-wave-hi-hello-gif-8807701',
+                'https://tenor.com/view/cute-anime-anime-girl-uwu-anime-cat-girl-gif-23139995',
+                'https://tenor.com/view/neko-anime-kawaii-nya-hi-gif-14223397',
+                'https://tenor.com/view/hello-hi-wave-anime-gif-11503720',
+                'https://tenor.com/view/anime-hi-girl-wave-hello-gif-5142315',
+                'https://tenor.com/view/anime-girl-run-fall-hi-gif-23177143',
+                'https://tenor.com/view/anime-hey-hello-peek-smile-gif-17556391',
+                'https://tenor.com/view/hello-gif-18163988',
+                'https://tenor.com/view/hello-wave-cute-anime-cartoon-gif-7537923',
+                'https://tenor.com/view/komi-san-ily-gif-23488189',
+                'https://tenor.com/view/anime-anime-girl-girl-cat-gif-18514354',
+                'https://tenor.com/view/shera-elf-anime-gif-16600170',
+                'https://tenor.com/view/hug-anime-anime-cuddle-gif-17789646',
+                'https://tenor.com/view/ishtar-butt-ass-booty-walking-gif-15972409',
+                'https://tenor.com/view/boobs-ecchi-anime-heart-gif-15899467',
+                'https://tenor.com/view/tohru-kobayashisan-chi-no-maid-dragon-dragon-maid-thumbs-up-gif-12390446',
+                'https://tenor.com/view/dragon-maid-tohru-in-love-cute-anime-gif-14096577',
+                'https://tenor.com/view/tohru-kobayashisan-chi-no-maid-dragon-dragon-maid-happy-in-love-gif-12390510'
+]
+
 MIMIR_USERS = {
     id_ski: 'https://www.youtube.com/watch?v=rJlY1uKL87k',
     id_vero: 'https://www.youtube.com/watch?v=1V4NjUvqK5o',
@@ -96,6 +146,7 @@ WELCOME_GIFS = [
     'https://tenor.com/view/welcome-gif-18737601',
     'https://tenor.com/view/welcome-to-our-office-eric-cartman-tolkien-black-south-park-s9e3-gif-22316454',
     'https://tenor.com/view/youre-welcome-cute-smile-gif-16728264',
+    'https://tenor.com/view/red-head-girl-anime-welcome-emi-yusa-gif-15338285'
     ]
 
 REDROOM_RESPONSES = [

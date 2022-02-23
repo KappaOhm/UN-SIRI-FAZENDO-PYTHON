@@ -27,9 +27,10 @@ class reply_messages:
             elif original_message.reference is not None:
                 referenced_message = await channel.fetch_message(original_message.reference.message_id)
                 await referenced_message.reply(data['results'][random_index]['media'][0]['gif']['url'])
+                await original_message.delete()
             else:
                 await channel.send(data['results'][random_index]['media'][0]['gif']['url'])
-            await original_message.delete()
+                await original_message.delete()
 
     async def handle_messages(text,message):
 

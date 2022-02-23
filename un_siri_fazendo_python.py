@@ -37,8 +37,11 @@ async def on_ready():
 @tasks.loop(hours=24)
 async def called_once_a_day():
     channel = client.get_channel(lobby_text_channel_id)
-    await embed_message.send_embed_msg(channel,None,"¡Hola Bom Día! ⭐")
-    await reply_messages.reply_with_GIF(channel,".gif anime lewd",None)
+    random_index1 = randint(0, len(BOMDIA_MESSASGES) - 1)
+    random_index2 = randint(0, len(BOMDIA_GIFS) - 1)
+    await embed_message.send_embed_msg(channel,None,BOMDIA_MESSASGES[random_index1])
+    await channel.send(BOMDIA_GIFS[random_index2])
+    #await reply_messages.reply_with_GIF(channel,".gif anime lewd",None)
 
 @called_once_a_day.before_loop
 async def before():
@@ -175,7 +178,7 @@ async def on_message(message):
 
     # SOLO MENSAJES DE MÁS DE 10 CARACTERES CUENTAN PARA XP
     if message.channel.id != dungeon_text_channel_id and (len(text) > 10 or len(message.attachments) > 0):
-        
+
         users = await level_system.read_users_data()
 
         # MENSAJES CON INSERCIONES DE IMAGENES DAN EL TRIPLE DE XP
