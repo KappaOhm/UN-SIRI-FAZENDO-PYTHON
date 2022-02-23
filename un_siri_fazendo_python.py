@@ -1,7 +1,4 @@
 # IMPORTS
-from dis import disco
-from importlib.resources import contents
-from tkinter.ttk import Style
 import discord
 import asyncio
 import os
@@ -98,11 +95,11 @@ async def play_song(message, URL):
 
     if is_playlist or is_shuffled:
         current_song_title = songs_titles[0]
-        await embed_message.send_embed_msg(message.channel, "🤟 Reproduciendo", current_song_title)
+        await embed_message.send_play_embed_msg(message.channel, "🤟 Reproduciendo", current_song_title)
         songs_titles.pop(0)
     else:
         current_song_title = songs_titles[-1]
-        await embed_message.send_embed_msg(message.channel, "🤟 Reproduciendo", current_song_title)
+        await embed_message.send_play_embed_msg(message.channel, "🤟 Reproduciendo", current_song_title)
         songs_titles.pop(-1)
 
     song_playing = current_song_title
@@ -441,11 +438,48 @@ async def on_member_update(memberBefore, memberAfter):
 # AGREGAR O QUITAR ROLES CON REACCIONES
 @client.event
 async def on_raw_reaction_add(payload):
-    await handle_roles.remove_or_add_role(client,payload,True)
+    global voice_client_playing
+
+    channel = client.get_channel(payload.channel_id)
+    message = await channel.fetch_message(payload.message_id)
+
+    is_for_roles = not payload.member.bot and payload.emoji.name != '⏭️' and payload.emoji.name !='⏸️' and payload.emoji.name !='▶️'
+
+    if payload.emoji.name == '⏭️' and not payload.member.bot and songs_titles:
+
+        voice_client_playing.pause()
+        await embed_message.send_embed_msg(channel, "Siguiente canción 🦀", None)
+        await message.clear_reaction('⏭️')
+        check_queue(message)
+
+    elif payload.emoji.name == '⏸️' and not payload.member.bot and songs_titles:
+        
+        await message.clear_reactions()
+
+        await message.add_reaction('▶️')
+        await message.add_reaction('⏭️')
+
+        voice_client_playing.pause()
+    
+    elif payload.emoji.name == '▶️' and not payload.member.bot and songs_titles:
+       
+        await message.clear_reactions()
+
+        await message.add_reaction('⏸️')
+        await message.add_reaction('⏭️')
+
+        voice_client_playing.resume()
+ 
+    elif is_for_roles :
+        await handle_roles.remove_or_add_role(client,payload,True)
 
 @client.event
 async def on_raw_reaction_remove(payload):
-    await handle_roles.remove_or_add_role(client,payload,False)
+    
+    is_for_roles = not payload.member.bot and payload.emoji.name != '⏭️' and payload.emoji.name !='⏸️' and payload.emoji.name !='▶️'
+
+    if is_for_roles:
+        await handle_roles.remove_or_add_role(client,payload,False)
 
 # CORRER BOT
 called_once_a_day.start()

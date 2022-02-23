@@ -10,6 +10,8 @@ from vars import id_role_Sales
 from vars import id_role_Survival
 from vars import id_role_FPS
 
+from un_siri_fazendo_python import check_queue
+
 class handle_roles:
 
     async def remove_or_add_role(client, payload, is_add):

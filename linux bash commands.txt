@@ -9,4 +9,5 @@ py -m pip install -U "discord.py[voice]"
 py -m pip install -U youtube-dl
 py -m pip install ffmpeg-python
 pip3 install requests
+pip3 install discord-components
 pip install --upgrade chardet

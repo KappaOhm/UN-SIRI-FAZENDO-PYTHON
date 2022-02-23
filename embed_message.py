@@ -12,6 +12,16 @@ class embed_message:
                                 color=0xFFA500)
         await channel.send(embed=embedVar)
 
+    async def send_play_embed_msg(channel, title, description):
+        def_description = description if description is not None else ''
+        def_title = title if title is not None else ''
+        embedVar = discord.Embed(title=def_title,
+                                description=def_description,
+                                color=0xFFA500)
+        msg = await channel.send(embed=embedVar)
+        await msg.add_reaction('⏸️')
+        await msg.add_reaction('⏭️')
+
     # EMBEDIDO CON LOS COMANDOS DE MUSICA AL USAR .help
     async def send_embed_help_msg(message):
         embedVar = discord.Embed(title="Lista de comandos",
