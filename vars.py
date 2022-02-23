@@ -9,7 +9,6 @@ shitpost_text_channel_id = 874373777797046312
 message_for_role_id     = 945245431766601769
 mimir_voice_channel_id  = 875909228307546192
 
-
 id_ski      = 443263765866217492
 id_gime     = 93483502177353738
 id_kappa    = 268991138310914048
@@ -42,7 +41,6 @@ voice_client_playing = None
 playing_mimir = False
 adding_song = False
 is_playlist = False
-is_shuffled = False
 
 songs_titles = []
 URL_queue = []

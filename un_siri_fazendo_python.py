@@ -93,14 +93,9 @@ async def play_song(message, URL):
     global songs_titles
     global song_playing
 
-    if is_playlist or is_shuffled:
-        current_song_title = songs_titles[0]
-        await embed_message.send_play_embed_msg(message.channel, "🤟 Reproduciendo", current_song_title)
-        songs_titles.pop(0)
-    else:
-        current_song_title = songs_titles[-1]
-        await embed_message.send_play_embed_msg(message.channel, "🤟 Reproduciendo", current_song_title)
-        songs_titles.pop(-1)
+    current_song_title = songs_titles[0]
+    await embed_message.send_play_embed_msg(message.channel, "🤟 Reproduciendo", current_song_title)
+    songs_titles.pop(0)
 
     song_playing = current_song_title
 
@@ -172,7 +167,6 @@ async def on_message(message):
     global songs_titles
     global URL_queue
     global is_playlist
-    global is_shuffled
 
     # IGNORAR MENSAJES DE BOTS, TANTO SIRI COMO OTROS
     if message.author == client.user or message.author.bot:
@@ -304,8 +298,6 @@ async def on_message(message):
             songs_titles = songs_titles_shuffled
             URL_queue = URL_queue_shuffled
 
-            is_shuffled = True
-
             await show_queue(message)
 
         else:
@@ -318,7 +310,6 @@ async def on_message(message):
             voice_client_playing.stop()
             URL_queue = []
             songs_titles = []
-            is_shuffled = False
             await embed_message.send_embed_msg(channel, None, "Reproduccion de música detenida 🦀")
 
     # COMANDO CLEAR
@@ -329,7 +320,6 @@ async def on_message(message):
             await embed_message.send_embed_msg(channel, None, "Cola de reproduccion borrada🎵🤠")
         else:
             await embed_message.send_embed_msg(channel, None, "Aqui no hay nada mi ciela 🦀")
-        is_shuffled = False
 
     # COMANDO QUEUE
     if text == '.q' and (channel.id == chat_con_siri_channel_id):
@@ -380,7 +370,6 @@ async def on_voice_state_update(member, before, after):
     global URL_queue
     global adding_song
     global is_disconnected
-    global is_shuffled
 
     before_channel = before.channel
     after_channel = after.channel
@@ -397,7 +386,6 @@ async def on_voice_state_update(member, before, after):
             voice_client_playing = None
             adding_song = False
             is_disconnected = True
-            is_shuffled = False
             URL_queue = []
             songs_titles = []
 
@@ -449,10 +437,10 @@ async def on_raw_reaction_add(payload):
 
         voice_client_playing.pause()
         await embed_message.send_embed_msg(channel, "Siguiente canción 🦀", None)
-        await message.clear_reaction('⏭️')
+        await message.clear_reactions()
         check_queue(message)
 
-    elif payload.emoji.name == '⏸️' and not payload.member.bot and songs_titles:
+    elif payload.emoji.name == '⏸️' and not payload.member.bot:
         
         await message.clear_reactions()
 
@@ -461,7 +449,7 @@ async def on_raw_reaction_add(payload):
 
         voice_client_playing.pause()
     
-    elif payload.emoji.name == '▶️' and not payload.member.bot and songs_titles:
+    elif payload.emoji.name == '▶️' and not payload.member.bot:
        
         await message.clear_reactions()
 
@@ -475,11 +463,11 @@ async def on_raw_reaction_add(payload):
 
 @client.event
 async def on_raw_reaction_remove(payload):
-    
-    is_for_roles = not payload.member.bot and payload.emoji.name != '⏭️' and payload.emoji.name !='⏸️' and payload.emoji.name !='▶️'
+    if payload.member is not None:
+        is_for_roles = not payload.member.bot and payload.emoji.name != '⏭️' and payload.emoji.name !='⏸️' and payload.emoji.name !='▶️'
 
-    if is_for_roles:
-        await handle_roles.remove_or_add_role(client,payload,False)
+        if is_for_roles:
+            await handle_roles.remove_or_add_role(client,payload,False)
 
 # CORRER BOT
 called_once_a_day.start()
