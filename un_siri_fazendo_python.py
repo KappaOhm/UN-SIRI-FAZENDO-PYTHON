@@ -1,4 +1,7 @@
 # IMPORTS
+from dis import disco
+from importlib.resources import contents
+from tkinter.ttk import Style
 import discord
 import asyncio
 import os
@@ -8,20 +11,22 @@ from random import randint, shuffle
 
 from discord import Intents
 from discord.ext import tasks
+from discord_components import DiscordComponents,Button
 from youtube_dl import YoutubeDL
 from datetime import datetime
-from discord_components import Button, SelectOption
 
+from reply_messages import *
 from level_system import *
 from embed_message import *
-from reply_messages import *
 from handle_roles import *
+
 from vars import *
 from bot_tokens import bot_token
 
 # INICIALIZAR CLIENTE DE DISCORD
 intents = Intents.all()
 client = discord.Client(intents=intents)
+DiscordComponents(client)
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -153,6 +158,13 @@ def get_YT_info(url_song):
         else:
             return URL
 
+@client.event
+async def on_button_click(interaction):
+    if interaction.component.custom_id == "yes":
+        await interaction.respond(content = "¡Tú sí sabes!",ephemeral =True)
+    if interaction.component.custom_id == "no":
+        await interaction.send(content = "Chale, aguafiestas...",ephemeral =True)   
+    
 # FUNCIONES CON MENSAJES DE TEXTO EN CANALES
 @client.event
 async def on_message(message):
@@ -171,41 +183,48 @@ async def on_message(message):
 
     # ELSE, EL MENSAJE NO VIENE DE NINGUN BOT
     text = message.content
+    channel = message.channel
+    
     await reply_messages.handle_messages(text,message)
-    await reply_messages.reply_with_GIF(message.channel,text,message)
+    await reply_messages.reply_with_GIF(channel,text,message)
         
     # SISTEMA DE XP POR MENSAJES
 
     # SOLO MENSAJES DE MÁS DE 10 CARACTERES CUENTAN PARA XP
-    if message.channel.id != dungeon_text_channel_id and (len(text) > 10 or len(message.attachments) > 0):
+    if channel.id != dungeon_text_channel_id and (len(text) > 10 or len(message.attachments) > 0):
 
         users = await level_system.read_users_data()
 
         # MENSAJES CON INSERCIONES DE IMAGENES DAN EL TRIPLE DE XP
-        xp_points = 15 if (len(message.attachments) > 0 and message.channel.id !=shitpost_text_channel_id) else 5
+        xp_points = 15 if (len(message.attachments) > 0 and channel.id !=shitpost_text_channel_id) else 5
         await level_system.update_data(users, str(message.author.id))
         await level_system.add_experience(users, str(message.author.id), xp_points)
-        await level_system.level_up(users, message.author, message.channel,client)
+        await level_system.level_up(users, message.author, channel,client)
 
         await level_system.write_users_data(users)
+
+    if text.startswith('.tt'):
+        button1 = Button(label="Sí ", style=3, emoji='🤠',custom_id="yes")
+        button2 = Button(label="No ", style=4, emoji='😔',custom_id="no")
+        await channel.send('¿Deberiamos banear a Ski?', components=[[button1,button2]])
 
     # COMANDO PARA REVISAR EXPERIENCIA PROPIA O DE OTRO USUARIO
     if text.startswith('.xp'):
         if text == '.xp':
-            await level_system.check_xp(None, message.author, message.channel)
+            await level_system.check_xp(None, message.author, channel)
         else:
             await level_system.check_xp(message, None, None)
 
     # COMANDO LEADERBOARD
     if text == '.lb':
-        await level_system.get_xp_leaderboard(message.channel,client)
+        await level_system.get_xp_leaderboard(channel,client)
 
     # COMANDO APOSTAR POR PAR
-    if text.startswith('.par') and message.channel.id == chat_con_siri_channel_id:
+    if text.startswith('.par') and channel.id == chat_con_siri_channel_id:
         await level_system.bet_par_impar(message, 0)
 
     # COMANDO APOSTAR POR IMPAR
-    if text.startswith('.impar') and message.channel.id == chat_con_siri_channel_id:
+    if text.startswith('.impar') and channel.id == chat_con_siri_channel_id:
         await level_system.bet_par_impar(message, 1)
 
     # DAR MONEDAS
@@ -214,18 +233,18 @@ async def on_message(message):
         number_of_coins = int(text[len(text)-2:len(text)])
         user = message.mentions[0]
         users[str(user.id)]['coins'] += number_of_coins
-        await message.channel.send(user.mention)
-        await embed_message.send_embed_msg(message.channel, None, "¡Te han otorgado " + str(number_of_coins) + "" + siri_fazendo_plata_emoji + " monedas!")
+        await channel.send(user.mention)
+        await embed_message.send_embed_msg(channel, None, "¡Te han otorgado " + str(number_of_coins) + "" + siri_fazendo_plata_emoji + " monedas!")
         await level_system.write_users_data(users)
 
     # COMANDO PLAY
-    if text.startswith('.play') or (text.startswith('.p') and ".par" not in text) and (message.channel.id == chat_con_siri_channel_id):
+    if text.startswith('.play') or (text.startswith('.p') and ".par" not in text) and (channel.id == chat_con_siri_channel_id):
 
         if message.author.voice is None:
-            await embed_message.send_embed_msg(message.channel, None, "No estas en un canal de voz 🦀")
+            await embed_message.send_embed_msg(channel, None, "No estas en un canal de voz 🦀")
         else:
             if voice_client_playing is not None and voice_client_playing.is_playing() and voice_client_playing.channel.id != message.author.voice.channel.id:
-                await embed_message.send_embed_msg(message.channel, None, "Ya estoy ocupado en otro canal de voz🦀")
+                await embed_message.send_embed_msg(channel, None, "Ya estoy ocupado en otro canal de voz🦀")
             else:
                 if text.startswith('.play'):
                     url_song = text.replace('.play ', '')
@@ -234,7 +253,7 @@ async def on_message(message):
                 try:
                     is_playlist = False
                     if 'list' in url_song:
-                        await embed_message.send_embed_msg(message.channel, None, "🎶 Descargando playlist...")
+                        await embed_message.send_embed_msg(channel, None, "🎶 Descargando playlist...")
                     URL = get_YT_info(url_song)
 
                     if is_playlist and voice_client_playing is None and len(URL_queue) > 0:
@@ -252,30 +271,30 @@ async def on_message(message):
                             if len(URL_queue) > 0:
                                 await message.add_reaction('🌟')
                                 if is_playlist:
-                                    await embed_message.send_embed_msg(message.channel, None, "Playlist agregada 🎶")
+                                    await embed_message.send_embed_msg(channel, None, "Playlist agregada 🎶")
                                 else:
-                                    await embed_message.send_embed_msg(message.channel, "Cancion agregada 🦀", songs_titles[-1])
+                                    await embed_message.send_embed_msg(channel, "Cancion agregada 🦀", songs_titles[-1])
 
                         if len(URL_queue) > 0 and voice_client_playing.is_playing() == False:
                             await play_song(message, URL_queue.pop(0))
                 except Exception as error:
                     print(error)
-                    await embed_message.send_embed_msg(message.channel, "Error", error.__context__.args[0])
+                    await embed_message.send_embed_msg(channel, "Error", error.__context__.args[0])
 
     # COMANDO NEXT
-    if text == '.next' or text == '.n' and (message.channel.id == chat_con_siri_channel_id):
+    if text == '.next' or text == '.n' and (channel.id == chat_con_siri_channel_id):
         if voice_client_playing is not None and len(URL_queue) > 0:
             voice_client_playing.pause()
-            await embed_message.send_embed_msg(message.channel, "Siguiente canción 🦀", None)
+            await embed_message.send_embed_msg(channel, "Siguiente canción 🦀", None)
             check_queue(message)
         else:
             adding_song = False
-            await embed_message.send_embed_msg(message.channel, None, "Aqui no hay nada mi ciela 🦀")
+            await embed_message.send_embed_msg(channel, None, "Aqui no hay nada mi ciela 🦀")
 
      # COMANDO SHUFFLE
-    if text == '.shuffle' or text == '.s' and (message.channel.id == chat_con_siri_channel_id):
+    if text == '.shuffle' or text == '.s' and (channel.id == chat_con_siri_channel_id):
         if voice_client_playing is not None and len(URL_queue) > 0:
-            await embed_message.send_embed_msg(message.channel, None, " 🧙🌟 ==> 🎲🎵")
+            await embed_message.send_embed_msg(channel, None, " 🧙🌟 ==> 🎲🎵")
 
             songs_titles_shuffled = []
             URL_queue_shuffled = []
@@ -294,33 +313,33 @@ async def on_message(message):
 
         else:
             adding_song = False
-            await embed_message.send_embed_msg(message.channel, None, "Aqui no hay nada mi ciela 🦀")        
+            await embed_message.send_embed_msg(channel, None, "Aqui no hay nada mi ciela 🦀")        
 
     # COMANDO STOP
-    if text == '.stop' and (message.channel.id == chat_con_siri_channel_id):
+    if text == '.stop' and (channel.id == chat_con_siri_channel_id):
         if voice_client_playing is not None and voice_client_playing.is_playing() == True:
             voice_client_playing.stop()
             URL_queue = []
             songs_titles = []
             is_shuffled = False
-            await embed_message.send_embed_msg(message.channel, None, "Reproduccion de música detenida 🦀")
+            await embed_message.send_embed_msg(channel, None, "Reproduccion de música detenida 🦀")
 
     # COMANDO CLEAR
-    if text == '.clear' and message.channel.id == chat_con_siri_channel_id:
+    if text == '.clear' and channel.id == chat_con_siri_channel_id:
         if URL_queue:
             URL_queue = []
             songs_titles = []
-            await embed_message.send_embed_msg(message.channel, None, "Cola de reproduccion borrada🎵🤠")
+            await embed_message.send_embed_msg(channel, None, "Cola de reproduccion borrada🎵🤠")
         else:
-            await embed_message.send_embed_msg(message.channel, None, "Aqui no hay nada mi ciela 🦀")
+            await embed_message.send_embed_msg(channel, None, "Aqui no hay nada mi ciela 🦀")
         is_shuffled = False
 
     # COMANDO QUEUE
-    if text == '.q' and (message.channel.id == chat_con_siri_channel_id):
+    if text == '.q' and (channel.id == chat_con_siri_channel_id):
         await show_queue(message)
 
     # COMANDO LEAVE
-    if text == '.leave' and (message.channel.id == chat_con_siri_channel_id):
+    if text == '.leave' and (channel.id == chat_con_siri_channel_id):
         is_disconnected = False
         if voice_client_mimir is not None:
             voice_client_mimir.stop()
@@ -337,14 +356,14 @@ async def on_message(message):
             adding_song = False
             is_disconnected = True
         if is_disconnected:
-            await embed_message.send_embed_msg(message.channel, None,"Ah pero ya me echaron, todo bien🦀🔪")
+            await embed_message.send_embed_msg(channel, None,"Ah pero ya me echaron, todo bien🦀🔪")
 
     # COMANDO MIMIR
-    if text.startswith('.mimir') and (message.channel.id == chat_con_siri_channel_id):
+    if text.startswith('.mimir') and (channel.id == chat_con_siri_channel_id):
 
         new_url_song = text.replace('.mimir ', '')
         MIMIR_USERS[message.author.id] = new_url_song
-        await message.channel.send('`Su nueva música para mimir : `' + new_url_song)
+        await channel.send('`Su nueva música para mimir : `' + new_url_song)
 
     # COMANDO DE AYUDA
     if text == '.help':

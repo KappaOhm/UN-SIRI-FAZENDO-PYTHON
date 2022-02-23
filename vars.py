@@ -63,7 +63,6 @@ LVLUP_MESSASGES =['¡Felicidades!🥳🎉`',
                   '¡Como lo mueve esa muchachota!💅`'
 ]
 
-
 BOMDIA_MESSASGES =['¡Hola Bom Día!⭐',
                   'Eu gostaria que você pudesse desfrutar de um dia inesquecível. Com esta mensagem, eu não só lhe desejo um bom dia, mas também desejo que possamos nos ver o mais rapidamente possível, para que os segundos parem de parecer horas🐒',
                   '🦄Problemas, trabalho, dificuldades, decepção … tudo ao seu lado parece uma miniatura, já que só penso em poder estar em seus braços para poder desfrutar do nosso amor juntos. Por esta razão, quero desejar-lhe a minha vida desde o primeiro minuto🦄',
