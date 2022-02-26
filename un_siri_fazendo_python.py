@@ -60,26 +60,28 @@ async def before():
     print("Finished waiting")
 
 # DESCONECTAR EL BOT SI DADOS X SEGUNDOS NO HA REPRODUCIDO NADA
-async def auto_disconnect(message):
+async def auto_disconnect(channel):
     await sleep(seconds_to_disconnect)
     if voice_client_playing is not None and not voice_client_playing.is_playing():
-        print('Desconectado automatico de canal de voz')
-        await embed_message.send_embed_msg(message.channel, None, "Me voy por inactividad ⏱️")
+        await embed_message.send_embed_msg(channel, None, "Me voy por inactividad ⏱️")
         await voice_client_playing.disconnect() 
+    if voice_client_mimir is not None and not voice_client_mimir.is_playing():
+        await embed_message.send_embed_msg(channel, None, "Me voy por inactividad ⏱️ 💤")
+        await voice_client_mimir.disconnect() 
 
 # ESTA FUNCION SE LLAMA AUTOMATICAMENTE CUANDO UNA CANCION TERMINA (after del .play) O CON EL COMANDO ".next"
 # SE ENCARGA DE VERIFICAR SI HAY CANCIONES EN COLA PARA DAR LA ORDEN DE REPRODUCIRLAS O DE LO CONTRARIO VERIFICAR SI DEBE DESCONECTAR EL BOT
-def check_queue(message):
+def check_queue(channel):
     global URL_queue
     global adding_song
     global songs_titles
 
     if len(URL_queue) > 0:
         asyncio.run_coroutine_threadsafe(
-            play_song(message, URL_queue.pop(0)), client.loop)
+            play_song(channel, URL_queue.pop(0)), client.loop)
     else:
         asyncio.run_coroutine_threadsafe(
-            auto_disconnect(message), client.loop)
+            auto_disconnect(channel), client.loop)
 
 # MANEJO DE COLA PARA CANCIONES
 def add_to_queue(adding_song, URL):
@@ -88,19 +90,19 @@ def add_to_queue(adding_song, URL):
         URL_queue.append(URL)        
 
 # REPRODUCIR CANCIONES EN COLA
-async def play_song(message, URL):
+async def play_song(channel, URL):
     global is_playlist
     global songs_titles
     global song_playing
 
     current_song_title = songs_titles[0]
-    await embed_message.send_play_embed_msg(message.channel, "🤟 Reproduciendo", current_song_title)
+    await embed_message.send_play_embed_msg(channel, "🤟 Reproduciendo", current_song_title)
     songs_titles.pop(0)
 
     song_playing = current_song_title
 
     source = await discord.FFmpegOpusAudio.from_probe(URL, **FFMPEG_OPTIONS)
-    voice_client_playing.play(source, after=lambda e: check_queue(message))
+    voice_client_playing.play(source, after=lambda e: check_queue(channel))
 
 # IMPRIMIR CANCIONES EN COLA
 async def show_queue(message):
@@ -162,7 +164,6 @@ async def on_button_click(interaction):
 async def on_message(message):
     global voice_client_playing
     global voice_client_mimir
-    global playing_mimir
     global adding_song
     global songs_titles
     global URL_queue
@@ -250,7 +251,7 @@ async def on_message(message):
                     if is_playlist and voice_client_playing is None and len(URL_queue) > 0:
                         voice_client_playing = await message.author.voice.channel.connect()
                         adding_song = True
-                        await play_song(message, URL_queue.pop(0))
+                        await play_song(message.channel, URL_queue.pop(0))
 
                     else:
                         if voice_client_playing is None and adding_song == False:
@@ -277,7 +278,7 @@ async def on_message(message):
         if voice_client_playing is not None and len(URL_queue) > 0:
             voice_client_playing.pause()
             await embed_message.send_embed_msg(channel, "Siguiente canción 🦀", None)
-            check_queue(message)
+            check_queue(message.channel)
         else:
             adding_song = False
             await embed_message.send_embed_msg(channel, None, "Aqui no hay nada mi ciela 🦀")
@@ -332,7 +333,6 @@ async def on_message(message):
             voice_client_mimir.stop()
             await voice_client_mimir.disconnect()
             voice_client_mimir = None
-            playing_mimir = False
             is_disconnected = True
         if voice_client_playing is not None:
             songs_titles = []
@@ -347,10 +347,9 @@ async def on_message(message):
 
     # COMANDO MIMIR
     if text.startswith('.mimir') and (channel.id == chat_con_siri_channel_id):
-
         new_url_song = text.replace('.mimir ', '')
         MIMIR_USERS[message.author.id] = new_url_song
-        await channel.send('`Su nueva música para mimir : `' + new_url_song)
+        await channel.send('`Su nueva música para mimir : ` ' + new_url_song)
 
     # COMANDO DE AYUDA
     if text == '.help':
@@ -364,7 +363,6 @@ async def on_message(message):
 @client.event
 async def on_voice_state_update(member, before, after):
     global voice_client_playing
-    global playing_mimir
     global voice_client_mimir
     global songs_titles
     global URL_queue
@@ -373,15 +371,10 @@ async def on_voice_state_update(member, before, after):
 
     before_channel = before.channel
     after_channel = after.channel
+
     if member.id == id_bot:
         if after.mute == True or after.suppress == True:
             await member.edit(mute=False)
-        if before_channel is not None and before_channel.id == mimir_voice_channel_id and after_channel is None:
-            if voice_client_mimir is not None:
-                voice_client_mimir.stop()
-                await voice_client_mimir.disconnect(force=True)
-            playing_mimir = False
-            return
         if before_channel is not None and after_channel is None:
             voice_client_playing = None
             adding_song = False
@@ -389,25 +382,53 @@ async def on_voice_state_update(member, before, after):
             URL_queue = []
             songs_titles = []
 
-    if before_channel is not None and before_channel.id != mimir_voice_channel_id:
-        if after_channel is not None and after_channel.id == mimir_voice_channel_id:
-            await sleep(1)
-            if playing_mimir == False and voice_client_playing is None:
-                songs_titles = []
-                URL_queue = []
-                if MIMIR_USERS.get(member.id) is not None:
-                    url_song = MIMIR_USERS[member.id]
-                else:
-                    url_song = MIMIR_USERS["default"]
-                with YoutubeDL(YDL_OPTIONS) as ydl:
-                    info = ydl.extract_info(url_song, download=False)
-                    URL = info['formats'][0]['url']
-                    source = await discord.FFmpegOpusAudio.from_probe(
-                        URL, **FFMPEG_OPTIONS)
+    if before_channel is not None and after_channel is not None and after_channel.id == mimir_voice_channel_id:
+        if voice_client_playing is None and member.id != id_bot:
+            siri_channel = client.get_channel(chat_con_siri_channel_id)
+            songs_titles = []
+            URL_queue = []
+            if MIMIR_USERS.get(member.id) is not None:
+                url_song = MIMIR_USERS[member.id]
+            else:
+                url_song = MIMIR_USERS["default"]
+            with YoutubeDL(YDL_OPTIONS) as ydl:
+                info = ydl.extract_info(url_song, download=False)
+                URL = info['formats'][0]['url']
 
-                    voice_client_mimir = await after_channel.connect()
-                    voice_client_mimir.play(source)
-                    playing_mimir = True
+                voice_client_mimir = await after_channel.connect()
+
+                source = await discord.FFmpegOpusAudio.from_probe(URL, **FFMPEG_OPTIONS)
+                voice_client_mimir.play(source, after=lambda e: check_queue(siri_channel))
+
+# MANEJAR LA REPRODUCCION DE MÚSICA CON REACCIONES
+async def control_music_with_reactions(payload):
+    global voice_client_playing
+
+    channel = client.get_channel(payload.channel_id)
+    message = await channel.fetch_message(payload.message_id)
+
+    if payload.emoji.name == '⏭️' and not payload.member.bot and songs_titles:
+        voice_client_playing.pause()
+        await embed_message.send_embed_msg(channel, "Siguiente canción 🦀", None)
+        await message.clear_reactions()
+        check_queue(channel)
+
+    elif payload.emoji.name == '⏸️' and not payload.member.bot and voice_client_playing.is_playing():
+        await message.clear_reactions()
+
+        await message.add_reaction('▶️')
+        await message.add_reaction('⏭️')
+
+        voice_client_playing.pause()
+    
+    elif payload.emoji.name == '▶️' and not payload.member.bot:
+        await message.clear_reactions()
+
+        await message.add_reaction('⏸️')
+        await message.add_reaction('⏭️')
+
+        voice_client_playing.resume()
+
 
 # SALUDAR MIEMBROS NUEVOS CUANDO ACEPTAN LAS REGLAS (CRIBADO DE MIEMBROS)
 @client.event
@@ -426,40 +447,12 @@ async def on_member_update(memberBefore, memberAfter):
 # AGREGAR O QUITAR ROLES CON REACCIONES
 @client.event
 async def on_raw_reaction_add(payload):
-    global voice_client_playing
-
-    channel = client.get_channel(payload.channel_id)
-    message = await channel.fetch_message(payload.message_id)
-
     is_for_roles = not payload.member.bot and payload.emoji.name != '⏭️' and payload.emoji.name !='⏸️' and payload.emoji.name !='▶️'
 
-    if payload.emoji.name == '⏭️' and not payload.member.bot and songs_titles:
-
-        voice_client_playing.pause()
-        await embed_message.send_embed_msg(channel, "Siguiente canción 🦀", None)
-        await message.clear_reactions()
-        check_queue(message)
-
-    elif payload.emoji.name == '⏸️' and not payload.member.bot:
-        
-        await message.clear_reactions()
-
-        await message.add_reaction('▶️')
-        await message.add_reaction('⏭️')
-
-        voice_client_playing.pause()
-    
-    elif payload.emoji.name == '▶️' and not payload.member.bot:
-       
-        await message.clear_reactions()
-
-        await message.add_reaction('⏸️')
-        await message.add_reaction('⏭️')
-
-        voice_client_playing.resume()
- 
-    elif is_for_roles :
+    if is_for_roles :
         await handle_roles.remove_or_add_role(client,payload,True)
+    else:
+        await control_music_with_reactions(payload)
 
 @client.event
 async def on_raw_reaction_remove(payload):
