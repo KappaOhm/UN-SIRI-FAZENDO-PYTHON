@@ -5,9 +5,9 @@ nohup python3 -u un_siri_fazendo_python.py &
 ps -ef | grep python
 
 ** install
-py -m pip install -U "discord.py[voice]"
-py -m pip install -U youtube-dl
-py -m pip install ffmpeg-python
+pip install -U "discord.py[voice]"
+pip install -U youtube-dl
+pip install ffmpeg-python
 pip3 install requests
 pip3 install discord-components
 pip install --upgrade chardet
