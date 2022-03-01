@@ -447,8 +447,8 @@ async def on_member_update(memberBefore, memberAfter):
 # AGREGAR O QUITAR ROLES CON REACCIONES
 @client.event
 async def on_raw_reaction_add(payload):
-    is_for_roles = not payload.member.bot and payload.emoji.name != '⏭️' and payload.emoji.name !='⏸️' and payload.emoji.name !='▶️'
-
+    is_for_roles = not payload.user_id == id_bot and payload.emoji.name != '⏭️' and payload.emoji.name !='⏸️' and payload.emoji.name !='▶️'
+    
     if is_for_roles :
         await handle_roles.remove_or_add_role(client,payload,True)
     else:
@@ -456,11 +456,10 @@ async def on_raw_reaction_add(payload):
 
 @client.event
 async def on_raw_reaction_remove(payload):
-    if payload.member is not None:
-        is_for_roles = not payload.member.bot and payload.emoji.name != '⏭️' and payload.emoji.name !='⏸️' and payload.emoji.name !='▶️'
+    is_for_roles = not payload.user_id == id_bot and payload.emoji.name != '⏭️' and payload.emoji.name !='⏸️' and payload.emoji.name !='▶️'
 
-        if is_for_roles:
-            await handle_roles.remove_or_add_role(client,payload,False)
+    if is_for_roles:
+        await handle_roles.remove_or_add_role(client,payload,False)
 
 # CORRER BOT
 called_once_a_day.start()
