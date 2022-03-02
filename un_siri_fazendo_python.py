@@ -105,7 +105,7 @@ async def play_song(channel, URL):
     voice_client_playing.play(source, after=lambda e: check_queue(channel))
 
 # IMPRIMIR CANCIONES EN COLA
-async def show_queue(message):
+async def show_queue(channel):
     global songs_titles
     global song_playing
 
@@ -117,9 +117,9 @@ async def show_queue(message):
             else:
                 queue = queue + "**" + \
                     str(x + 1) + ". " + "**" + songs_titles[x-1] + "\n"
-        await embed_message.send_embed_msg(message.channel, "Canciones en cola", queue)
+        await embed_message.send_embed_msg(channel, "Canciones en cola", queue)
     else:
-        await embed_message.send_embed_msg(message.channel, None, "Aqui no hay nada mi ciela🦀")
+        await embed_message.send_embed_msg(channel, None, "Aqui no hay nada mi ciela🦀")
 
 # CARGAR LA INFORMACION DE UNA BUSQUEDA O URL DE YOUTUBE
 def get_YT_info(url_song):
@@ -251,7 +251,7 @@ async def on_message(message):
                     if is_playlist and voice_client_playing is None and len(URL_queue) > 0:
                         voice_client_playing = await message.author.voice.channel.connect()
                         adding_song = True
-                        await play_song(message.channel, URL_queue.pop(0))
+                        await play_song(channel, URL_queue.pop(0))
 
                     else:
                         if voice_client_playing is None and adding_song == False:
@@ -268,7 +268,7 @@ async def on_message(message):
                                     await embed_message.send_embed_msg(channel, "Cancion agregada 🦀", songs_titles[-1])
 
                         if len(URL_queue) > 0 and voice_client_playing.is_playing() == False:
-                            await play_song(message, URL_queue.pop(0))
+                            await play_song(channel, URL_queue.pop(0))
                 except Exception as error:
                     print(error)
                     await embed_message.send_embed_msg(channel, "Error", error.__context__.args[0])
@@ -278,7 +278,7 @@ async def on_message(message):
         if voice_client_playing is not None and len(URL_queue) > 0:
             voice_client_playing.pause()
             await embed_message.send_embed_msg(channel, "Siguiente canción 🦀", None)
-            check_queue(message.channel)
+            check_queue(channel)
         else:
             adding_song = False
             await embed_message.send_embed_msg(channel, None, "Aqui no hay nada mi ciela 🦀")
@@ -299,7 +299,7 @@ async def on_message(message):
             songs_titles = songs_titles_shuffled
             URL_queue = URL_queue_shuffled
 
-            await show_queue(message)
+            await show_queue(channel)
 
         else:
             adding_song = False
@@ -324,7 +324,7 @@ async def on_message(message):
 
     # COMANDO QUEUE
     if text == '.q' and (channel.id == chat_con_siri_channel_id):
-        await show_queue(message)
+        await show_queue(channel)
 
     # COMANDO LEAVE
     if text == '.leave' and (channel.id == chat_con_siri_channel_id):
@@ -377,10 +377,11 @@ async def on_voice_state_update(member, before, after):
             await member.edit(mute=False)
         if before_channel is not None and after_channel is None:
             voice_client_playing = None
-            adding_song = False
-            is_disconnected = True
-            URL_queue = []
+            voice_client_mimir  = None
             songs_titles = []
+            URL_queue = []
+            adding_song = False
+            is_disconnected = True        
 
     if before_channel is not None and after_channel is not None and after_channel.id == mimir_voice_channel_id:
         if voice_client_playing is None and member.id != id_bot:
