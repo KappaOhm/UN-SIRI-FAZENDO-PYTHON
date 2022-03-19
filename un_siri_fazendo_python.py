@@ -270,8 +270,13 @@ async def on_message(message):
                         if len(URL_queue) > 0 and voice_client_playing.is_playing() == False:
                             await play_song(channel, URL_queue.pop(0))
                 except Exception as error:
+
+                    if error.__context__ is not None and error.__context__.args is not None:
+                        mensaje = error.__context__.args[0]
+                    else:
+                        mensaje = "Lo siento, ocurrió un error u.u"
                     print(error)
-                    await embed_message.send_embed_msg(channel, "Error", error.__context__.args[0])
+                    await embed_message.send_embed_msg(channel, "Error", mensaje)
 
     # COMANDO NEXT
     if text == '.next' or text == '.n' and (channel.id == chat_con_siri_channel_id):
