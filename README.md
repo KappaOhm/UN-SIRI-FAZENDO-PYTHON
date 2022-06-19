@@ -10,7 +10,7 @@
  <a href="https://github.com/KappaOhm/UN-SIRI-FAZENDO-PYTHON">
   <img src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/95fa93bc-bb27-45ae-ab2f-680ea92bd79e/deqbwof-3e625c35-29d3-48bf-9180-9d810de75b35.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzk1ZmE5M2JjLWJiMjctNDVhZS1hYjJmLTY4MGVhOTJiZDc5ZVwvZGVxYndvZi0zZTYyNWMzNS0yOWQzLTQ4YmYtOTE4MC05ZDgxMGRlNzViMzUucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.jBtTOS2i26MbSWyEot-40E6ZjLXeWH9snECMaWVEj2w" alt="Logo" width="80" height="80">
  </a>
-  <h3 align="center">Un siri fazendo python 🦀 - Discord bot</h3> 
+  <h3 align="center">Un siri fazendo barra 🦀 - Discord bot</h3> 
 
 </div>
 
