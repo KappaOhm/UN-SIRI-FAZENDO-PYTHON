@@ -65,9 +65,6 @@ async def auto_disconnect(channel):
     if voice_client_playing is not None and not voice_client_playing.is_playing():
         await embed_message.send_embed_msg(channel, None, "Me voy por inactividad ⏱️")
         await voice_client_playing.disconnect() 
-    if voice_client_mimir is not None and not voice_client_mimir.is_playing():
-        await embed_message.send_embed_msg(channel, None, "Me voy por inactividad ⏱️ 💤")
-        await voice_client_mimir.disconnect() 
 
 # ESTA FUNCION SE LLAMA AUTOMATICAMENTE CUANDO UNA CANCION TERMINA (after del .play) O CON EL COMANDO ".next"
 # SE ENCARGA DE VERIFICAR SI HAY CANCIONES EN COLA PARA DAR LA ORDEN DE REPRODUCIRLAS O DE LO CONTRARIO VERIFICAR SI DEBE DESCONECTAR EL BOT
@@ -163,7 +160,6 @@ async def on_button_click(interaction):
 @client.event
 async def on_message(message):
     global voice_client_playing
-    global voice_client_mimir
     global adding_song
     global songs_titles
     global URL_queue
@@ -334,11 +330,6 @@ async def on_message(message):
     # COMANDO LEAVE
     if text == '.leave' and (channel.id == chat_con_siri_channel_id):
         is_disconnected = False
-        if voice_client_mimir is not None:
-            voice_client_mimir.stop()
-            await voice_client_mimir.disconnect()
-            voice_client_mimir = None
-            is_disconnected = True
         if voice_client_playing is not None:
             songs_titles = []
             URL_queue = []
@@ -349,12 +340,6 @@ async def on_message(message):
             is_disconnected = True
         if is_disconnected:
             await embed_message.send_embed_msg(channel, None,"Ah pero ya me echaron, todo bien🦀🔪")
-
-    # COMANDO MIMIR
-    if text.startswith('.mimir') and (channel.id == chat_con_siri_channel_id):
-        new_url_song = text.replace('.mimir ', '')
-        MIMIR_USERS[message.author.id] = new_url_song
-        await channel.send('`Su nueva música para mimir : ` ' + new_url_song)
 
     # COMANDO DE AYUDA
     if text == '.help':
@@ -368,7 +353,6 @@ async def on_message(message):
 @client.event
 async def on_voice_state_update(member, before, after):
     global voice_client_playing
-    global voice_client_mimir
     global songs_titles
     global URL_queue
     global adding_song
@@ -382,29 +366,11 @@ async def on_voice_state_update(member, before, after):
             await member.edit(mute=False)
         if before_channel is not None and after_channel is None:
             voice_client_playing = None
-            voice_client_mimir  = None
             songs_titles = []
             URL_queue = []
             adding_song = False
             is_disconnected = True        
 
-    if before_channel is not None and after_channel is not None and after_channel.id == mimir_voice_channel_id:
-        if voice_client_playing is None and member.id != id_bot:
-            siri_channel = client.get_channel(chat_con_siri_channel_id)
-            songs_titles = []
-            URL_queue = []
-            if MIMIR_USERS.get(member.id) is not None:
-                url_song = MIMIR_USERS[member.id]
-            else:
-                url_song = MIMIR_USERS["default"]
-            with YoutubeDL(YDL_OPTIONS) as ydl:
-                info = ydl.extract_info(url_song, download=False)
-                URL = info['formats'][0]['url']
-
-                voice_client_mimir = await after_channel.connect()
-
-                source = await discord.FFmpegOpusAudio.from_probe(URL, **FFMPEG_OPTIONS)
-                voice_client_mimir.play(source, after=lambda e: check_queue(siri_channel))
 
 # MANEJAR LA REPRODUCCION DE MÚSICA CON REACCIONES
 async def control_music_with_reactions(payload):

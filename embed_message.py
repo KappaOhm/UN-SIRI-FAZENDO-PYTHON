@@ -55,8 +55,6 @@ class embed_message:
         embedVar.add_field(
             name=".leave", value="Desconecta a siri del chat de voz", inline=False)
         embedVar.add_field(
-            name=".mimir", value="Acompañado de un enlace de Youtube, configura la música que sonará cuando entren al canal de AFKs (💤Mimidxs)", inline=False)
-        embedVar.add_field(
             name=".cmd", value="Muestra comandos relacionados a XP y monedas", inline=False)
         await message.channel.send(embed=embedVar)
     
