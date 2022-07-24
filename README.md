@@ -105,7 +105,8 @@ La clase main que se encarga de correr el bot es - SiriMain.py -
 Tiene todo el comportamiento actual del bot, se ayuda de otras clases auxiliares
 ```
 ```diff
-La clase - EnvironmentVariables.py - tiene todas las variables como IDs de: servidor, canales de texto, roles etc, 
+La clase - EnvironmentVariables.py - tiene todas las variables 
+como IDs de: servidor, canales de texto, roles etc, 
 esto para que puedan hacer sus propias copias con sus propios bots y servidores, 
 de manera que posibles implementaciones suyas sean mas faciles de integrar al código
 ```
@@ -114,8 +115,8 @@ Una clase llamada - BotTokens.py - es necesaria pero no existe en el repo porque
 que debe ser privado, es decir usen su propio bot token 🤠 (proveniente de discord) 
 
 La clase debe contener dos variables:
-bot_token = ''
-tenor_token = ''
+BOT_TOKEN = ''
+TENOR_TOKEN = ''
 
 El tenor_token se usa para la funcionalidad de GIFs, es posible omitirlo
 ```
