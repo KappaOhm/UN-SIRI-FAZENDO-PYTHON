@@ -101,16 +101,16 @@
 ## Herramientas de desarrollo
 
 ```diff
-La clase main que se encarga de correr el bot es - un_siri_fazendo_python.py - 
+La clase main que se encarga de correr el bot es - SiriMain.py - 
 Tiene todo el comportamiento actual del bot, se ayuda de otras clases auxiliares
 ```
 ```diff
-La clase - vars.py - tiene todas las variables como IDs de: servidor, canales de texto, roles etc, 
+La clase - EnvironmentVariables.py - tiene todas las variables como IDs de: servidor, canales de texto, roles etc, 
 esto para que puedan hacer sus propias copias con sus propios bots y servidores, 
 de manera que posibles implementaciones suyas sean mas faciles de integrar al código
 ```
 ```diff
-Una clase llamada - bot_tokens.py - es necesaria pero no existe en el repo porque contiene el token del bot
+Una clase llamada - BotTokens.py - es necesaria pero no existe en el repo porque contiene el token del bot
 que debe ser privado, es decir usen su propio bot token 🤠 (proveniente de discord) 
 
 La clase debe contener dos variables:
