@@ -1,45 +1,38 @@
 import discord
+from EnvironmentVariables import CHISMECITO_ROLE_ID, CODING_ROLE_ID, DESIGN_ROLE_ID, FPS_ROLE_ID, MESSAGE_FOR_ROLE_ID, \
+    REDROOM_ROLE_ID, SALES_ROLE_ID, SHITPOST_ROLE_ID, SURVIVAL_ROLE_ID
 
-from vars import message_for_role_id
-from vars import id_role_Design
-from vars import id_role_Coding
-from vars import id_role_Chismecito
-from vars import id_role_RedRoom
-from vars import id_role_ShitPost
-from vars import id_role_Sales
-from vars import id_role_Survival
-from vars import id_role_FPS
 
-class handle_roles:
+class HandleRoles:
 
     async def remove_or_add_role(client, payload, is_add):
 
-            if payload.message_id == message_for_role_id:
+            if payload.message_id == MESSAGE_FOR_ROLE_ID:
                 guild_id = payload.guild_id
                 guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
                 if payload.emoji.name == '🎨':
                     role = discord.utils.get(guild.roles,
-                                            id=id_role_Design)  # DISEÑADOR
+                                            id=DESIGN_ROLE_ID)  # DISEÑADOR
                 elif payload.emoji.name == '📟':
                     role = discord.utils.get(guild.roles,
-                                            id=id_role_Coding)  # PROGRAMADOR
+                                            id=CODING_ROLE_ID)  # PROGRAMADOR
                 elif payload.emoji.name == '🙊':
                     role = discord.utils.get(guild.roles,
-                                            id=id_role_Chismecito)  # CHISMECITO
+                                            id=CHISMECITO_ROLE_ID)  # CHISMECITO
                 elif payload.emoji.name == 'Panting':
                     role = discord.utils.get(guild.roles,
-                                            id=id_role_RedRoom)  # REDROOM
+                                            id=REDROOM_ROLE_ID)  # REDROOM
                 elif payload.emoji.name == 'TomUhm':
                     role = discord.utils.get(guild.roles,
-                                            id=id_role_ShitPost)  # SHITPOST
+                                            id=SHITPOST_ROLE_ID)  # SHITPOST
                 elif payload.emoji.name == 'MaruMoney':
                     role = discord.utils.get(guild.roles,
-                                            id=id_role_Sales)  # OFERTAS
+                                            id=SALES_ROLE_ID)  # OFERTAS
                 elif payload.emoji.name == 'MinecraftGrassBlock':
                     role = discord.utils.get(guild.roles,
-                                            id=id_role_Survival)  # SURVIVAL
+                                            id=SURVIVAL_ROLE_ID)  # SURVIVAL
                 elif payload.emoji.name == 'KeyF':
-                    role = discord.utils.get(guild.roles, id=id_role_FPS)  # FPS
+                    role = discord.utils.get(guild.roles, id=FPS_ROLE_ID)  # FPS
                 else:
                     role = discord.utils.get(guild.roles, name=payload.emoji.name)
                     

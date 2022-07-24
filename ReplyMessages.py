@@ -1,23 +1,19 @@
-import discord
-import requests
-
 from random import randint
 
-from embed_message import embed_message
-from vars import id_kappa
-from vars import red_room_channel_id
-from vars import REDROOM_RESPONSES
-from vars import CONTEXTO
-from vars import TRECE
-from bot_tokens import tenor_token
+import discord
+import requests
+from BotTokens import TENOR_TOKEN
+from EmbedMessages import EmbedMessages
+from EnvironmentVariables import OWNER_ID, RED_ROOM_TEXT_CHANNEL_ID, contexto, redroom_responses, trece
 
-class reply_messages:
+
+class ReplyMessages:
 
     async def reply_with_GIF(channel,text,original_message):
 
         if text.startswith('.gif'):
             search_term = text[5:]
-            response = requests.get("https://g.tenor.com/v1/search?q={}&key={}&limit=100".format(search_term, tenor_token))
+            response = requests.get("https://g.tenor.com/v1/search?q={}&key={}&limit=15".format(search_term, TENOR_TOKEN))
             data = response.json()
             random_index = randint(0, len(data['results']) - 1)
             gif_url = data['results'][random_index]['media'][0]['gif']['url']
@@ -63,12 +59,12 @@ class reply_messages:
                     'ocurrio un errorsinho con el comando "' + text + '" - escribe bien esa monda🦀🔪')
 
         # RESPONDER A IMAGENES EN RED ROOM
-        if channel.id == red_room_channel_id and len(message.attachments) > 0:
+        if channel.id == RED_ROOM_TEXT_CHANNEL_ID and len(message.attachments) > 0:
             random_number = randint(0, 99)
-            random_index = randint(0, len(REDROOM_RESPONSES) - 1)
+            random_index = randint(0, len(redroom_responses) - 1)
             if random_number < 25:
                 message_to_reply = await channel.fetch_message(message.id)
-                await message_to_reply.reply(REDROOM_RESPONSES[random_index])
+                await message_to_reply.reply(redroom_responses[random_index])
 
         if text.startswith('siri'):
             await channel.send('eu estou fazendo barra')
@@ -81,16 +77,16 @@ class reply_messages:
             await channel.send('agache y me lo muerde 🦀')
 
         if text.endswith('contexto'):
-            random_index = randint(0, len(CONTEXTO) - 1)
-            await channel.send(CONTEXTO[random_index])
+            random_index = randint(0, len(contexto) - 1)
+            await channel.send(contexto[random_index])
 
         if text.endswith('complejo'):
             await channel.send('complejo como mi cangrejo 🥵')
 
         if text.endswith('trece') or text == '12 + 1' or text == '12+1':
             await message.add_reaction('🥵')
-            random_index = randint(0, len(TRECE) - 1)
-            await channel.send(TRECE[random_index])
+            random_index = randint(0, len(trece) - 1)
+            await channel.send(trece[random_index])
 
         if text == 'ocho' or text == 'Ocho' or text == '8' or text == '7+1' or text == '7 + 1':
             await channel.send('por el culo te la enclocho 🤠')
@@ -104,6 +100,6 @@ class reply_messages:
             await message.add_reaction('🇪')
             await message.add_reaction('🇷')
         
-        if text.startswith('.anuncio') and message.author.id == id_kappa:
+        if text.startswith('.anuncio') and message.author.id == OWNER_ID:
             await message.delete()
-            await embed_message.send_embed_msg(channel,None,text[8:len(text)]) 
+            await EmbedMessages.send_embed_msg(channel,None,text[8:len(text)]) 

@@ -1,10 +1,9 @@
 import discord
-
-from vars import siri_image
+from EnvironmentVariables import SIRI_IMAGE
 
 last_reply_msg = None
 
-class embed_message:
+class EmbedMessages:
     # ENVIAR MENSAJES EMBEBIDOS (EL FORMATO ES MAS BONITO)
     async def send_embed_msg(channel, title, description):
         def_description = description if description is not None else ''
@@ -37,7 +36,7 @@ class embed_message:
                                 description="Estos son los comandos disponibles de un siri fanzendo barra",
                                 color=0xFFA500)
         embedVar.set_author(name="by KappaOhm")
-        embedVar.set_thumbnail(url=siri_image)
+        embedVar.set_thumbnail(url=SIRI_IMAGE)
         embedVar.add_field(
             name=".gif", value="Seguido de un termino de busqueda hace que siri busque y responda con un GIF relacionado", inline=False)
         embedVar.add_field(
@@ -64,7 +63,7 @@ class embed_message:
                                 description="",
                                 color=0xFFA500)
         embedVar.set_author(name="by KappaOhm")
-        embedVar.set_thumbnail(url=siri_image)
+        embedVar.set_thumbnail(url=SIRI_IMAGE)
         embedVar.add_field(name=".xp | .xp @usuario",
                         value="Muestra la informacion del usuario", inline=False)
         embedVar.add_field(

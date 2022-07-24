@@ -1,24 +1,21 @@
 # IMPORTS
-import discord
 import asyncio
 import os
-
 from asyncio import sleep
+from datetime import datetime
 from random import randint, shuffle
 
+import discord
+from BotTokens import BOT_TOKEN
 from discord import Intents
 from discord.ext import tasks
-from discord_components import DiscordComponents,Button
+from discord_components import Button, DiscordComponents
+from EmbedMessages import *
+from EnvironmentVariables import *
+from HandleRoles import *
+from LevelSystem import *
+from ReplyMessages import *
 from youtube_dl import YoutubeDL
-from datetime import datetime
-
-from reply_messages import *
-from level_system import *
-from embed_message import *
-from handle_roles import *
-
-from vars import *
-from bot_tokens import bot_token
 
 # INICIALIZAR CLIENTE DE DISCORD
 intents = Intents.all()
@@ -26,6 +23,7 @@ client = discord.Client(intents=intents)
 DiscordComponents(client)
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
+
 
 # MENSAJE AL INICIAR EL BOT
 @client.event
@@ -38,11 +36,11 @@ async def on_ready():
 # TAREA QUE SE CORRE CADA 24 HORAS, PARA HACER QUE EL BOT ENVIE UN MENSAJE TODOS LOS DIAS A UNA HORA ESPECIFICA  
 @tasks.loop(hours=24)
 async def called_once_a_day():
-    channel = client.get_channel(lobby_text_channel_id)
-    random_index1 = randint(0, len(BOMDIA_MESSASGES) - 1)
-    random_index2 = randint(0, len(BOMDIA_GIFS) - 1)
-    await embed_message.send_embed_msg(channel,None,BOMDIA_MESSASGES[random_index1])
-    await channel.send(BOMDIA_GIFS[random_index2])
+    channel = client.get_channel(LOBBY_TEXT_CHANNEL_I)
+    random_index1 = randint(0, len(bomdia_messages) - 1)
+    random_index2 = randint(0, len(bomdia_gifs) - 1)
+    await EmbedMessages.send_embed_msg(channel,None,bomdia_messages[random_index1])
+    await channel.send(bomdia_gifs[random_index2])
     #await reply_messages.reply_with_GIF(channel,".gif anime lewd",None)
 
 @called_once_a_day.before_loop
@@ -61,9 +59,9 @@ async def before():
 
 # DESCONECTAR EL BOT SI DADOS X SEGUNDOS NO HA REPRODUCIDO NADA
 async def auto_disconnect(channel):
-    await sleep(seconds_to_disconnect)
+    await sleep(SECONDS_TO_DISCONNECT)
     if voice_client_playing is not None and not voice_client_playing.is_playing():
-        await embed_message.send_embed_msg(channel, None, "Me voy por inactividad ⏱️")
+        await EmbedMessages.send_embed_msg(channel, None, "Me voy por inactividad ⏱️")
         await voice_client_playing.disconnect() 
 
 # ESTA FUNCION SE LLAMA AUTOMATICAMENTE CUANDO UNA CANCION TERMINA (after del .play) O CON EL COMANDO ".next"
@@ -93,7 +91,7 @@ async def play_song(channel, URL):
     global song_playing
 
     current_song_title = songs_titles[0]
-    await embed_message.send_play_embed_msg(channel, "🤟 Reproduciendo", current_song_title)
+    await EmbedMessages.send_play_embed_msg(channel, "🤟 Reproduciendo", current_song_title)
     songs_titles.pop(0)
 
     song_playing = current_song_title
@@ -114,9 +112,9 @@ async def show_queue(channel):
             else:
                 queue = queue + "**" + \
                     str(x + 1) + ". " + "**" + songs_titles[x-1] + "\n"
-        await embed_message.send_embed_msg(channel, "Canciones en cola", queue)
+        await EmbedMessages.send_embed_msg(channel, "Canciones en cola", queue)
     else:
-        await embed_message.send_embed_msg(channel, None, "Aqui no hay nada mi ciela🦀")
+        await EmbedMessages.send_embed_msg(channel, None, "Aqui no hay nada mi ciela🦀")
 
 # CARGAR LA INFORMACION DE UNA BUSQUEDA O URL DE YOUTUBE
 def get_YT_info(url_song):
@@ -173,23 +171,23 @@ async def on_message(message):
     text = message.content
     channel = message.channel
     
-    await reply_messages.handle_messages(text,message)
-    await reply_messages.reply_with_GIF(channel,text,message)
+    await ReplyMessages.handle_messages(text,message)
+    await ReplyMessages.reply_with_GIF(channel,text,message)
         
     # SISTEMA DE XP POR MENSAJES
 
     # SOLO MENSAJES DE MÁS DE 10 CARACTERES CUENTAN PARA XP
-    if channel.id != dungeon_text_channel_id and (len(text) > 10 or len(message.attachments) > 0):
+    if channel.id != DUNGEON_TEXT_CHANNEL_ID and (len(text) > 10 or len(message.attachments) > 0):
 
-        users = await level_system.read_users_data()
+        users = await LevelSystem.read_users_data()
 
         # MENSAJES CON INSERCIONES DE IMAGENES DAN EL TRIPLE DE XP
-        xp_points = 15 if (len(message.attachments) > 0 and channel.id !=shitpost_text_channel_id) else 5
-        await level_system.update_data(users, str(message.author.id))
-        await level_system.add_experience(users, str(message.author.id), xp_points)
-        await level_system.level_up(users, message.author, channel,client)
+        xp_points = 15 if (len(message.attachments) > 0 and channel.id !=SHITPOST_TEXT_CHANNEL_ID) else 5
+        await LevelSystem.update_data(users, str(message.author.id))
+        await LevelSystem.add_experience(users, str(message.author.id), xp_points)
+        await LevelSystem.level_up(users, message.author, channel,client)
 
-        await level_system.write_users_data(users)
+        await LevelSystem.write_users_data(users)
 
     if text.startswith('.tt'):
         button1 = Button(label="Sí ", style=3, emoji='🤠',custom_id="yes")
@@ -199,40 +197,40 @@ async def on_message(message):
     # COMANDO PARA REVISAR EXPERIENCIA PROPIA O DE OTRO USUARIO
     if text.startswith('.xp'):
         if text == '.xp':
-            await level_system.check_xp(None, message.author, channel)
+            await LevelSystem.check_xp(None, message.author, channel)
         else:
-            await level_system.check_xp(message, None, None)
+            await LevelSystem.check_xp(message, None, None)
 
     # COMANDO LEADERBOARD
     if text == '.lb':
-        await level_system.get_xp_leaderboard(channel,client)
+        await LevelSystem.get_xp_leaderboard(channel,client)
 
     # COMANDO APOSTAR POR PAR
-    if text.startswith('.par') and channel.id == chat_con_siri_channel_id:
-        await level_system.bet_par_impar(message, 0)
+    if text.startswith('.par') and channel.id == SIRI_CHAT_TEXT_CHANNEL_ID:
+        await LevelSystem.bet_par_impar(message, 0)
 
     # COMANDO APOSTAR POR IMPAR
-    if text.startswith('.impar') and channel.id == chat_con_siri_channel_id:
-        await level_system.bet_par_impar(message, 1)
+    if text.startswith('.impar') and channel.id == SIRI_CHAT_TEXT_CHANNEL_ID:
+        await LevelSystem.bet_par_impar(message, 1)
 
     # DAR MONEDAS
-    if text.startswith('.award') and message.author.id == id_kappa:
-        users = await level_system.read_users_data()
+    if text.startswith('.award') and message.author.id == OWNER_ID:
+        users = await LevelSystem.read_users_data()
         number_of_coins = int(text[len(text)-2:len(text)])
         user = message.mentions[0]
         users[str(user.id)]['coins'] += number_of_coins
         await channel.send(user.mention)
-        await embed_message.send_embed_msg(channel, None, "¡Te han otorgado " + str(number_of_coins) + "" + siri_fazendo_plata_emoji + " monedas!")
-        await level_system.write_users_data(users)
+        await EmbedMessages.send_embed_msg(channel, None, "¡Te han otorgado " + str(number_of_coins) + "" + SIRI_FAZENDO_PLATA_EMOJI + " monedas!")
+        await LevelSystem.write_users_data(users)
 
     # COMANDO PLAY
-    if text.startswith('.play') or (text.startswith('.p') and ".par" not in text) and (channel.id == chat_con_siri_channel_id):
+    if text.startswith('.play') or (text.startswith('.p') and ".par" not in text) and (channel.id == SIRI_CHAT_TEXT_CHANNEL_ID):
 
         if message.author.voice is None:
-            await embed_message.send_embed_msg(channel, None, "No estas en un canal de voz 🦀")
+            await EmbedMessages.send_embed_msg(channel, None, "No estas en un canal de voz 🦀")
         else:
             if voice_client_playing is not None and voice_client_playing.is_playing() and voice_client_playing.channel.id != message.author.voice.channel.id:
-                await embed_message.send_embed_msg(channel, None, "Ya estoy ocupado en otro canal de voz🦀")
+                await EmbedMessages.send_embed_msg(channel, None, "Ya estoy ocupado en otro canal de voz🦀")
             else:
                 if text.startswith('.play'):
                     url_song = text.replace('.play ', '')
@@ -241,7 +239,7 @@ async def on_message(message):
                 try:
                     is_playlist = False
                     if 'list' in url_song:
-                        await embed_message.send_embed_msg(channel, None, "🎶 Descargando playlist...")
+                        await EmbedMessages.send_embed_msg(channel, None, "🎶 Descargando playlist...")
                     URL = get_YT_info(url_song)
 
                     if is_playlist and voice_client_playing is None and len(URL_queue) > 0:
@@ -259,9 +257,9 @@ async def on_message(message):
                             if len(URL_queue) > 0:
                                 await message.add_reaction('🌟')
                                 if is_playlist:
-                                    await embed_message.send_embed_msg(channel, None, "Playlist agregada 🎶")
+                                    await EmbedMessages.send_embed_msg(channel, None, "Playlist agregada 🎶")
                                 else:
-                                    await embed_message.send_embed_msg(channel, "Cancion agregada 🦀", songs_titles[-1])
+                                    await EmbedMessages.send_embed_msg(channel, "Cancion agregada 🦀", songs_titles[-1])
 
                         if len(URL_queue) > 0 and voice_client_playing.is_playing() == False:
                             await play_song(channel, URL_queue.pop(0))
@@ -272,22 +270,22 @@ async def on_message(message):
                     else:
                         mensaje = "Lo siento, ocurrió un error u.u"
                     print(error)
-                    await embed_message.send_embed_msg(channel, "Error", mensaje)
+                    await EmbedMessages.send_embed_msg(channel, "Error", mensaje)
 
     # COMANDO NEXT
-    if text == '.next' or text == '.n' and (channel.id == chat_con_siri_channel_id):
+    if text == '.next' or text == '.n' and (channel.id == SIRI_CHAT_TEXT_CHANNEL_ID):
         if voice_client_playing is not None and len(URL_queue) > 0:
             voice_client_playing.pause()
-            await embed_message.send_embed_msg(channel, "Siguiente canción 🦀", None)
+            await EmbedMessages.send_embed_msg(channel, "Siguiente canción 🦀", None)
             check_queue(channel)
         else:
             adding_song = False
-            await embed_message.send_embed_msg(channel, None, "Aqui no hay nada mi ciela 🦀")
+            await EmbedMessages.send_embed_msg(channel, None, "Aqui no hay nada mi ciela 🦀")
 
      # COMANDO SHUFFLE
-    if text == '.shuffle' or text == '.s' and (channel.id == chat_con_siri_channel_id):
+    if text == '.shuffle' or text == '.s' and (channel.id == SIRI_CHAT_TEXT_CHANNEL_ID):
         if voice_client_playing is not None and len(URL_queue) > 0:
-            await embed_message.send_embed_msg(channel, None, " 🧙🌟 ==> 🎲🎵")
+            await EmbedMessages.send_embed_msg(channel, None, " 🧙🌟 ==> 🎲🎵")
 
             songs_titles_shuffled = []
             URL_queue_shuffled = []
@@ -304,31 +302,31 @@ async def on_message(message):
 
         else:
             adding_song = False
-            await embed_message.send_embed_msg(channel, None, "Aqui no hay nada mi ciela 🦀")        
+            await EmbedMessages.send_embed_msg(channel, None, "Aqui no hay nada mi ciela 🦀")        
 
     # COMANDO STOP
-    if text == '.stop' and (channel.id == chat_con_siri_channel_id):
+    if text == '.stop' and (channel.id == SIRI_CHAT_TEXT_CHANNEL_ID):
         if voice_client_playing is not None and voice_client_playing.is_playing() == True:
             voice_client_playing.stop()
             URL_queue = []
             songs_titles = []
-            await embed_message.send_embed_msg(channel, None, "Reproduccion de música detenida 🦀")
+            await EmbedMessages.send_embed_msg(channel, None, "Reproduccion de música detenida 🦀")
 
     # COMANDO CLEAR
-    if text == '.clear' and channel.id == chat_con_siri_channel_id:
+    if text == '.clear' and channel.id == SIRI_CHAT_TEXT_CHANNEL_ID:
         if URL_queue:
             URL_queue = []
             songs_titles = []
-            await embed_message.send_embed_msg(channel, None, "Cola de reproduccion borrada🎵🤠")
+            await EmbedMessages.send_embed_msg(channel, None, "Cola de reproduccion borrada🎵🤠")
         else:
-            await embed_message.send_embed_msg(channel, None, "Aqui no hay nada mi ciela 🦀")
+            await EmbedMessages.send_embed_msg(channel, None, "Aqui no hay nada mi ciela 🦀")
 
     # COMANDO QUEUE
-    if text == '.q' and (channel.id == chat_con_siri_channel_id):
+    if text == '.q' and (channel.id == SIRI_CHAT_TEXT_CHANNEL_ID):
         await show_queue(channel)
 
     # COMANDO LEAVE
-    if text == '.leave' and (channel.id == chat_con_siri_channel_id):
+    if text == '.leave' and (channel.id == SIRI_CHAT_TEXT_CHANNEL_ID):
         is_disconnected = False
         if voice_client_playing is not None:
             songs_titles = []
@@ -339,15 +337,15 @@ async def on_message(message):
             adding_song = False
             is_disconnected = True
         if is_disconnected:
-            await embed_message.send_embed_msg(channel, None,"Ah pero ya me echaron, todo bien🦀🔪")
+            await EmbedMessages.send_embed_msg(channel, None,"Ah pero ya me echaron, todo bien🦀🔪")
 
     # COMANDO DE AYUDA
     if text == '.help':
-        await embed_message.send_embed_help_msg(message)
+        await EmbedMessages.send_embed_help_msg(message)
 
     # COMANDO DE COMANDOS XP Y MONEDAS
     if text == '.cmd':
-        await embed_message.send_embed_cmd_msg(message)
+        await EmbedMessages.send_embed_cmd_msg(message)
 
 # CONECTAR BOT AL VOICE CHAT DE AFKs Y LIMPIAR VARIABLES CUANDO SE DESCONECTA DE CUALQUIER CANAL DE VOZ
 @client.event
@@ -361,7 +359,7 @@ async def on_voice_state_update(member, before, after):
     before_channel = before.channel
     after_channel = after.channel
 
-    if member.id == id_bot:
+    if member.id == BOT_ID:
         if after.mute == True or after.suppress == True:
             await member.edit(mute=False)
         if before_channel is not None and after_channel is None:
@@ -381,7 +379,7 @@ async def control_music_with_reactions(payload):
 
     if payload.emoji.name == '⏭️' and not payload.member.bot and songs_titles:
         voice_client_playing.pause()
-        await embed_message.send_embed_msg(channel, "Siguiente canción 🦀", None)
+        await EmbedMessages.send_embed_msg(channel, "Siguiente canción 🦀", None)
         await message.clear_reactions()
         check_queue(channel)
 
@@ -406,33 +404,33 @@ async def control_music_with_reactions(payload):
 @client.event
 async def on_member_update(memberBefore, memberAfter):
     if memberBefore.pending == True and memberAfter.pending == False:
-        guild = client.get_guild(server_id)
-        role = discord.utils.get(guild.roles, id=id_role_Amateur)
+        guild = client.get_guild(SERVER_ID)
+        role = discord.utils.get(guild.roles, id=AMATEUR_ROLE_ID)
         await memberAfter.add_roles(role)
         print("Added welcome role: ", role)
-        channel = guild.get_channel(lobby_text_channel_id)
+        channel = guild.get_channel(LOBBY_TEXT_CHANNEL_I)
         await sleep(2)
-        random_index = randint(0, len(WELCOME_GIFS) - 1)
+        random_index = randint(0, len(welcome_gifs) - 1)
         await channel.send(client.get_user(memberAfter.id).mention)
-        await channel.send(WELCOME_GIFS[random_index])
+        await channel.send(welcome_gifs[random_index])
 
 # AGREGAR O QUITAR ROLES CON REACCIONES
 @client.event
 async def on_raw_reaction_add(payload):
-    is_for_roles = not payload.user_id == id_bot and payload.emoji.name != '⏭️' and payload.emoji.name !='⏸️' and payload.emoji.name !='▶️'
+    is_for_roles = not payload.user_id == BOT_ID and payload.emoji.name != '⏭️' and payload.emoji.name !='⏸️' and payload.emoji.name !='▶️'
     
     if is_for_roles :
-        await handle_roles.remove_or_add_role(client,payload,True)
+        await HandleRoles.remove_or_add_role(client,payload,True)
     else:
         await control_music_with_reactions(payload)
 
 @client.event
 async def on_raw_reaction_remove(payload):
-    is_for_roles = not payload.user_id == id_bot and payload.emoji.name != '⏭️' and payload.emoji.name !='⏸️' and payload.emoji.name !='▶️'
+    is_for_roles = not payload.user_id == BOT_ID and payload.emoji.name != '⏭️' and payload.emoji.name !='⏸️' and payload.emoji.name !='▶️'
 
     if is_for_roles:
-        await handle_roles.remove_or_add_role(client,payload,False)
+        await HandleRoles.remove_or_add_role(client,payload,False)
 
 # CORRER BOT
 called_once_a_day.start()
-client.run(bot_token)
+client.run(BOT_TOKEN)

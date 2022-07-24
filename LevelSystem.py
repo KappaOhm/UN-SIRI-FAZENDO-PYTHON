@@ -1,17 +1,13 @@
-import discord
 import json
-
 from random import randint
-from embed_message import embed_message
 
-from vars import siri_fazendo_plata_emoji
-from vars import server_id
-from vars import id_role_Safados
-from vars import LVLUP_MESSASGES
-from vars import TITLES_PER_LVL
-from vars import COINS_PER_LVL
+import discord
+from EmbedMessages import EmbedMessages
+from EnvironmentVariables import COINS_PER_LVL, LVLUP_MESSASGES, SAFADOS_ROLE_ID, SERVER_ID, SIRI_FAZENDO_PLATA_EMOJI, \
+    TITLES_PER_LVL
 
-class level_system:
+
+class LevelSystem:
     
     # LEER ARCHIVO JSON
     async def read_users_data():
@@ -26,14 +22,14 @@ class level_system:
 
 
     async def bet_par_impar(message, identifier):
-        users = await level_system.read_users_data()
+        users = await LevelSystem.read_users_data()
         user = str(message.author.id)
         number_of_coins = int(message.content.replace(
             '.par ', '')) if identifier == 0 else int(message.content.replace('.impar ', ''))
         user_coins = users[user]['coins']
 
         if user_coins < 1 or number_of_coins > user_coins:
-            await embed_message.send_embed_msg(message.channel, None, "No tienes suficientes " + siri_fazendo_plata_emoji + " monedas!")
+            await EmbedMessages.send_embed_msg(message.channel, None, "No tienes suficientes " + SIRI_FAZENDO_PLATA_EMOJI + " monedas!")
             return
 
         users[user]['coins'] -= number_of_coins
@@ -45,14 +41,14 @@ class level_system:
             # ganó
             users[user]['coins'] += number_of_coins*2
             def_description = "¡Ganaste " + \
-                str(number_of_coins*2) + siri_fazendo_plata_emoji + " monedas!"
+                str(number_of_coins*2) + SIRI_FAZENDO_PLATA_EMOJI + " monedas!"
             image_url = 'https://cdn.discordapp.com/emojis/882779204431773757.png'
         else:
             # no ganó xd
             def_description = "¡Felicidades! Perdiste tus monedas y te puedes comer esta monda : "
             image_url = 'https://cdn.discordapp.com/emojis/874053563146440754.png?size=96'
 
-        await level_system.write_users_data(users)
+        await LevelSystem.write_users_data(users)
 
         embedVar = discord.Embed(title=def_title,
                                 description=def_description,
@@ -86,7 +82,7 @@ class level_system:
                 # A NIVEL 5 DAR SAFADOS
                 if level_end == 5:
                     role = client.get_guild(
-                        server_id).get_role(id_role_Safados)
+                        SERVER_ID).get_role(SAFADOS_ROLE_ID)
                     await user.add_roles(role)
                     await channel.send("{} `ha obtenido el rol : {} `".format(user.mention, role.name))
 
@@ -94,14 +90,14 @@ class level_system:
                 users[str(user.id)]['coins'] += COINS_PER_LVL[level_end]
 
                 random_index = randint(0, len(LVLUP_MESSASGES) - 1)
-                await channel.send("{} `ha subido al nivel {} - Recibes {}`".format(user.mention, level_end, COINS_PER_LVL[level_end]) + siri_fazendo_plata_emoji + "` monedas " + LVLUP_MESSASGES[random_index])
-                await level_system.write_users_data(users)
+                await channel.send("{} `ha subido al nivel {} - Recibes {}`".format(user.mention, level_end, COINS_PER_LVL[level_end]) + SIRI_FAZENDO_PLATA_EMOJI + "` monedas " + LVLUP_MESSASGES[random_index])
+                await LevelSystem.write_users_data(users)
 
-                await level_system.check_xp(None, user, channel)
+                await LevelSystem.check_xp(None, user, channel)
 
 
     async def check_xp(message, user, channel):
-        users = await level_system.read_users_data()
+        users = await LevelSystem.read_users_data()
         user = message.mentions[0] if message is not None else user
         channel = message.channel if message is not None else channel
 
@@ -124,13 +120,13 @@ class level_system:
             embedVar.add_field(name=title, value="XP : " +
                             str(user_xp), inline=True)
             embedVar.add_field(name="Monedas :", value=str(
-                users[str(user.id)]['coins']) + siri_fazendo_plata_emoji, inline=True)
+                users[str(user.id)]['coins']) + SIRI_FAZENDO_PLATA_EMOJI, inline=True)
             embedVar.add_field(name="LVL " + str(user_lvl) + " ------------------> " + " LVL " + str(user_lvl+1),
                             value=progress_current_lvl * ":orange_heart:" + (top_next_lvl-progress_current_lvl) * ":white_heart:", inline=False)
             await channel.send(embed=embedVar)
-            await level_system.write_users_data(users)
+            await LevelSystem.write_users_data(users)
         else:
-            await embed_message.embed_message.send_embed_msg(channel, None, "Este usuario aún no acumula XP 🎲")
+            await EmbedMessages.embed_message.send_embed_msg(channel, None, "Este usuario aún no acumula XP 🎲")
 
 
     def get_leader_value(leader):
@@ -138,7 +134,7 @@ class level_system:
 
     # LEADERBOARD
     async def get_xp_leaderboard(channel,client):
-        users = await level_system.read_users_data()
+        users = await LevelSystem.read_users_data()
         if users:
             leaders = []
             for user in users:
@@ -147,7 +143,7 @@ class level_system:
                 leader_value["leader_value"] = users[user]['experience']
                 leaders.append(leader_value)
 
-            leaders.sort(key=level_system.get_leader_value, reverse=True)
+            leaders.sort(key=LevelSystem.get_leader_value, reverse=True)
 
             embedVar = discord.Embed(title="Tabla de puntuaciones",
                                     description='Aqui estão as pessoas que mais fazem barra', color=0xFFA500)
@@ -160,7 +156,7 @@ class level_system:
                 name = emoji + " " + current_user.name + " - LVL " + \
                     str(users[str(leader['user_id'])]['level'])
                 value = "# " + str(x) + " - XP : " + str(leader['leader_value']) + " - Monedas : " + str(
-                    users[str(leader['user_id'])]['coins']) + siri_fazendo_plata_emoji
+                    users[str(leader['user_id'])]['coins']) + SIRI_FAZENDO_PLATA_EMOJI
                 embedVar.add_field(name=name, value=value, inline=False)
                 if x == 1:
                     embedVar.set_thumbnail(url=current_user.avatar_url)
