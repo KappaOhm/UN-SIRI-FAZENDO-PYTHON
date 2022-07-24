@@ -1,5 +1,5 @@
 ** run bot even when closing the console
-nohup python3 -u un_siri_fazendo_python.py &
+nohup python3 -u SiriMain.py &
 
 ** prints running processes to be able to stop the bot process
 ps -ef | grep python
