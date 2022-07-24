@@ -111,7 +111,13 @@ de manera que posibles implementaciones suyas sean mas faciles de integrar al c�
 ```
 ```diff
 Una clase llamada - bot_tokens.py - es necesaria pero no existe en el repo porque contiene el token del bot
-que debe ser privado, es decir usen su propio bot token🤠
+que debe ser privado, es decir usen su propio bot token 🤠 (proveniente de discord) 
+
+La clase debe contener dos variables:
+bot_token = ''
+tenor_token = ''
+
+El tenor_token se usa para la funcionalidad de GIFs, es posible omitirlo
 ```
 
 Esta sección enlista los principales frameworks, APIs y librerias utilizados para crear el proyecto:
