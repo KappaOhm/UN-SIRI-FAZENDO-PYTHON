@@ -266,8 +266,10 @@ async def on_message(message):
         try:
             users = await LevelSystem.read_users_data()
             bd_date = text[len(text)-len('MM-DD'):]
-            month_name = calendar.month_name[int(bd_date[:len(bd_date)-len('-DD')])]
+            month_number = int(bd_date[:len(bd_date)-len('-DD')])
+            month_name = calendar.month_name[month_number]
             mont_day = bd_date[len('MM-'):]
+            datetime(2000,month_number,int(mont_day))
             user = message.mentions[0] if message.mentions else message.author
             users[str(user.id)]['bd'] = month_name + " " + mont_day
             await message.add_reaction('🎂')
@@ -275,7 +277,7 @@ async def on_message(message):
             await LevelSystem.write_users_data(users)
             await LevelSystem.check_xp(None, user, channel)
         except :
-            await EmbedMessages.send_embed_msg(channel, None, "Ocurrio un error, quizas no usaste el formato adecuado u.u")
+            await EmbedMessages.send_embed_msg(channel, None, "Ocurrio un error, quizas no usaste el formato adecuado o una fecha valida u.u")
 
     # SETEAR UN CUMPLEAÑOS (bd)    
     if text.startswith('.deletecum'):
