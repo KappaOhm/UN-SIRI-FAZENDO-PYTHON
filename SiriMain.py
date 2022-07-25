@@ -200,22 +200,23 @@ async def on_message(message):
         await LevelSystem.write_users_data(users)
 
     # INTENTAR HACER UN PICK DE SIRI COINS
-    if channel.id not in not_allowed_channel_ids and channel.id == pick_message_object.channel.id and pending_pick==True and text.startswith('.pick'):
-        if text == (".pick " + image_rng_text):
-            pending_pick = False
+    if pick_message_object is not None:
+        if channel.id not in not_allowed_channel_ids and channel.id == pick_message_object.channel.id and pending_pick==True and text.startswith('.pick'):
+            if text == (".pick " + image_rng_text):
+                pending_pick = False
 
-            users = await LevelSystem.read_users_data()
-            user = message.author
-            users[str(user.id)]['coins'] += coin_amount
-            await LevelSystem.write_users_data(users)
-            
-            await pick_message_object.delete()
-            embedVar = discord.Embed(title='',
-                                description=message.author.mention + ' atrapó las siri coins' +SIRI_FAZENDO_PLATA_EMOJI,
-                                color=0xFFA500)
-            msg = await channel.send(embed=embedVar)
-            await asyncio.sleep(8)
-            await msg.delete()
+                users = await LevelSystem.read_users_data()
+                user = message.author
+                users[str(user.id)]['coins'] += coin_amount
+                await LevelSystem.write_users_data(users)
+                
+                await pick_message_object.delete()
+                embedVar = discord.Embed(title='',
+                                    description=message.author.mention + ' atrapó las siri coins' +SIRI_FAZENDO_PLATA_EMOJI,
+                                    color=0xFFA500)
+                msg = await channel.send(embed=embedVar)
+                await asyncio.sleep(8)
+                await msg.delete()
 
     # COMANDO PARA REVISAR EXPERIENCIA PROPIA O DE OTRO USUARIO
     if text.startswith('.xp'):
