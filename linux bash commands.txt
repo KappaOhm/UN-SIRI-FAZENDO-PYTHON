@@ -1,15 +1,17 @@
 ** run bot even when closing the console
+nohup python -u SiriMain.py &
 nohup python3 -u SiriMain.py &
+nohup python3.9 -u SiriMain.py &
 
 ** prints running processes to be able to stop the bot process
 ps -ef | grep python
 
 ** install
-pip install Pillow
-pip install discord
-pip install -U "discord.py[voice]"
+pip3 install Pillow
+pip3 install discord
+pip3 install -U "discord.py[voice]"
 pip3 install discord-components
-pip install -U youtube-dl
-pip install ffmpeg-python
+pip3 install -U youtube-dl
+pip3 install ffmpeg-python
 pip3 install requests
-pip install --upgrade chardet
+pip3 install --upgrade chardet
