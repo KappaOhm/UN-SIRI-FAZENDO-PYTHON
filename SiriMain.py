@@ -189,7 +189,7 @@ async def on_message(message):
 
         # PLANTAR SIRI COINS
         if channel.id not in not_allowed_channel_ids and pending_pick==False:
-            chance = 100 # %
+            chance = 5 # %
             if randint(1, 101) + chance > 100:
                 pending_pick,image_rng_text,pick_message_object,coin_amount = await LevelSystem.plant_coins(channel)
             
