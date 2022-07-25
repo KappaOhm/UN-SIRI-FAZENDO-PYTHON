@@ -140,15 +140,14 @@ class LevelSystem:
         if str(user.id) in users:
             user_xp = users[str(user.id)]['experience']
             user_lvl = users[str(user.id)]['level']
-            next_lvl_xp = 166*(-1.5 + user_lvl + 1)**(1.80)
+            next_lvl_xp = 47.2298*(2*(user_lvl+1)- 3)**(20/11)
+            current_lvl_base_xp = 47.2298*(2*(user_lvl)- 3)**(20/11)
 
             title = TITLES_PER_LVL[user_lvl]
 
-            old_range = int(next_lvl_xp - 0)
-            new_range = (10 - 1)
-            top_next_lvl = int((((next_lvl_xp - 0) * new_range) / old_range) + 1)
-            progress_current_lvl = int(
-                (((user_xp - 0) * new_range) / old_range) + 1)
+            old_min = int(current_lvl_base_xp)
+            old_max =  int(next_lvl_xp)
+            progress_current_lvl = int(((user_xp - old_min) * (10 - 1)) / (old_max - old_min)) + 1
 
             embedVar = discord.Embed(
                 title=user.display_name, description='', color=0xFFA500)
@@ -158,7 +157,7 @@ class LevelSystem:
             embedVar.add_field(name="Monedas :", value=str(
                 users[str(user.id)]['coins']) + SIRI_FAZENDO_PLATA_EMOJI, inline=True)
             embedVar.add_field(name="LVL " + str(user_lvl) + " ------------------> " + " LVL " + str(user_lvl+1),
-                            value=progress_current_lvl * ":orange_heart:" + (top_next_lvl-progress_current_lvl) * ":white_heart:", inline=False)
+                            value=progress_current_lvl * ":orange_heart:" + (10-progress_current_lvl) * ":white_heart:", inline=False)
             await channel.send(embed=embedVar)
             await LevelSystem.write_users_data(users)
         else:
