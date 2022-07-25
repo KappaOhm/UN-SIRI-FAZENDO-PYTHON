@@ -236,10 +236,11 @@ async def on_message(message):
         await LevelSystem.write_users_data(users)
 
     # PLANTAR MONEDAS
-    if text.startswith('.plant') and message.author.id == OWNER_ID and pending_pick==False:
+    if text.startswith('.plant') and channel.id not in not_allowed_channel_ids and message.author.id == OWNER_ID and pending_pick==False:
         password = text[len('.plant')+1:]
+        await message.delete()
         pending_pick,image_rng_text,pick_message_object,coin_amount = await LevelSystem.plant_coins(channel,password)
-
+        
     # COMANDO PARA REVISAR EXPERIENCIA PROPIA O DE OTRO USUARIO
     if text.startswith('.xp'):
         if text == '.xp':
@@ -291,7 +292,7 @@ async def on_message(message):
         await channel.send('¿Deberiamos banear a Ski?', components=[[button1,button2]])
         
     # COMANDO PLAY
-    if text.startswith('.play') or (text.startswith('.p') and ".par" not in text) and (channel.id == SIRI_CHAT_TEXT_CHANNEL_ID):
+    if text.startswith('.play') or (text.startswith('.p') and ".par" not in text and ".plant" not in text and ".pick" not in text) and (channel.id == SIRI_CHAT_TEXT_CHANNEL_ID):
 
         if message.author.voice is None:
             await EmbedMessages.send_embed_msg(channel, None, "No estas en un canal de voz 🦀")
