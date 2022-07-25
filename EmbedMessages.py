@@ -66,6 +66,8 @@ class EmbedMessages:
         embedVar.set_thumbnail(url=SIRI_IMAGE)
         embedVar.add_field(name=".xp | .xp @usuario",
                         value="Muestra la informacion del usuario", inline=False)
+        embedVar.add_field(name=".pick",
+                        value="Seguido de un codigo aleatorio de 4 caracteres recoge siri monedas plantadas", inline=False)
         embedVar.add_field(
             name=".lb", value="Muestra la tabla de puntuaciones de experiencia", inline=False)
         embedVar.add_field(

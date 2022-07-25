@@ -13,7 +13,7 @@ from discord_components import Button, DiscordComponents
 from EmbedMessages import *
 from EnvironmentVariables import *
 from HandleRoles import *
-from LevelSystem import *
+from LevelAndCoinsSystem import *
 from ReplyMessages import *
 from youtube_dl import YoutubeDL
 
@@ -24,7 +24,6 @@ DiscordComponents(client)
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-
 # MENSAJE AL INICIAR EL BOT
 @client.event
 async def on_ready():
@@ -33,10 +32,18 @@ async def on_ready():
     print(dir_path)
     print('---------------------------')
 
+# TEST DE BUTTON COMPONENTS
+@client.event
+async def on_button_click(interaction):
+    if interaction.component.custom_id == "yes":
+        await interaction.respond(content = "¡Tú sí sabes!",ephemeral =True)
+    if interaction.component.custom_id == "no":
+        await interaction.send(content = "Chale, aguafiestas...",ephemeral =True)     
+
 # TAREA QUE SE CORRE CADA 24 HORAS, PARA HACER QUE EL BOT ENVIE UN MENSAJE TODOS LOS DIAS A UNA HORA ESPECIFICA  
 @tasks.loop(hours=24)
 async def called_once_a_day():
-    channel = client.get_channel(LOBBY_TEXT_CHANNEL_I)
+    channel = client.get_channel(LOBBY_TEXT_CHANNEL_ID)
     random_index1 = randint(0, len(bomdia_messages) - 1)
     random_index2 = randint(0, len(bomdia_gifs) - 1)
     await EmbedMessages.send_embed_msg(channel,None,bomdia_messages[random_index1])
@@ -146,14 +153,7 @@ def get_YT_info(url_song):
             return URL_queue[0]
         else:
             return URL
-
-@client.event
-async def on_button_click(interaction):
-    if interaction.component.custom_id == "yes":
-        await interaction.respond(content = "¡Tú sí sabes!",ephemeral =True)
-    if interaction.component.custom_id == "no":
-        await interaction.send(content = "Chale, aguafiestas...",ephemeral =True)   
-    
+   
 # FUNCIONES CON MENSAJES DE TEXTO EN CANALES
 @client.event
 async def on_message(message):
@@ -162,6 +162,10 @@ async def on_message(message):
     global songs_titles
     global URL_queue
     global is_playlist
+    global pending_pick
+    global image_rng_text
+    global pick_message_object
+    global coin_amount
 
     # IGNORAR MENSAJES DE BOTS, TANTO SIRI COMO OTROS
     if message.author == client.user or message.author.bot:
@@ -170,9 +174,8 @@ async def on_message(message):
     # ELSE, EL MENSAJE NO VIENE DE NINGUN BOT
     text = message.content
     channel = message.channel
-    
-    await ReplyMessages.handle_messages(text,message)
-    await ReplyMessages.reply_with_GIF(channel,text,message)
+   
+    await ReplyMessages.process_messages(channel,text,message)
         
     # SISTEMA DE XP POR MENSAJES
 
@@ -183,16 +186,36 @@ async def on_message(message):
 
         # MENSAJES CON INSERCIONES DE IMAGENES DAN EL TRIPLE DE XP
         xp_points = 15 if (len(message.attachments) > 0 and channel.id !=SHITPOST_TEXT_CHANNEL_ID) else 5
+
+        # PLANTAR SIRI COINS
+        if channel.id not in not_allowed_channel_ids and pending_pick==False:
+            chance = 100 # %
+            if randint(1, 101) + chance > 100:
+                pending_pick,image_rng_text,pick_message_object,coin_amount = await LevelSystem.plant_coins(channel)
+            
         await LevelSystem.update_data(users, str(message.author.id))
         await LevelSystem.add_experience(users, str(message.author.id), xp_points)
         await LevelSystem.level_up(users, message.author, channel,client)
 
         await LevelSystem.write_users_data(users)
 
-    if text.startswith('.tt'):
-        button1 = Button(label="Sí ", style=3, emoji='🤠',custom_id="yes")
-        button2 = Button(label="No ", style=4, emoji='😔',custom_id="no")
-        await channel.send('¿Deberiamos banear a Ski?', components=[[button1,button2]])
+    # INTENTAR HACER UN PICK DE SIRI COINS
+    if channel.id not in not_allowed_channel_ids and channel.id == pick_message_object.channel.id and pending_pick==True and text.startswith('.pick'):
+        if text == (".pick " + image_rng_text):
+            pending_pick = False
+
+            users = await LevelSystem.read_users_data()
+            user = message.author
+            users[str(user.id)]['coins'] += coin_amount
+            await LevelSystem.write_users_data(users)
+            
+            await pick_message_object.delete()
+            embedVar = discord.Embed(title='',
+                                description=message.author.mention + ' atrapó las siri coins' +SIRI_FAZENDO_PLATA_EMOJI,
+                                color=0xFFA500)
+            msg = await channel.send(embed=embedVar)
+            await asyncio.sleep(8)
+            await msg.delete()
 
     # COMANDO PARA REVISAR EXPERIENCIA PROPIA O DE OTRO USUARIO
     if text.startswith('.xp'):
@@ -223,6 +246,11 @@ async def on_message(message):
         await EmbedMessages.send_embed_msg(channel, None, "¡Te han otorgado " + str(number_of_coins) + "" + SIRI_FAZENDO_PLATA_EMOJI + " monedas!")
         await LevelSystem.write_users_data(users)
 
+    if text.startswith('.testbutton'):
+        button1 = Button(label="Sí ", style=3, emoji='🤠',custom_id="yes")
+        button2 = Button(label="No ", style=4, emoji='😔',custom_id="no")
+        await channel.send('¿Deberiamos banear a Ski?', components=[[button1,button2]])
+        
     # COMANDO PLAY
     if text.startswith('.play') or (text.startswith('.p') and ".par" not in text) and (channel.id == SIRI_CHAT_TEXT_CHANNEL_ID):
 
@@ -339,14 +367,6 @@ async def on_message(message):
         if is_disconnected:
             await EmbedMessages.send_embed_msg(channel, None,"Ah pero ya me echaron, todo bien🦀🔪")
 
-    # COMANDO DE AYUDA
-    if text == '.help':
-        await EmbedMessages.send_embed_help_msg(message)
-
-    # COMANDO DE COMANDOS XP Y MONEDAS
-    if text == '.cmd':
-        await EmbedMessages.send_embed_cmd_msg(message)
-
 # CONECTAR BOT AL VOICE CHAT DE AFKs Y LIMPIAR VARIABLES CUANDO SE DESCONECTA DE CUALQUIER CANAL DE VOZ
 @client.event
 async def on_voice_state_update(member, before, after):
@@ -408,7 +428,7 @@ async def on_member_update(memberBefore, memberAfter):
         role = discord.utils.get(guild.roles, id=AMATEUR_ROLE_ID)
         await memberAfter.add_roles(role)
         print("Added welcome role: ", role)
-        channel = guild.get_channel(LOBBY_TEXT_CHANNEL_I)
+        channel = guild.get_channel(LOBBY_TEXT_CHANNEL_ID)
         await sleep(2)
         random_index = randint(0, len(welcome_gifs) - 1)
         await channel.send(client.get_user(memberAfter.id).mention)

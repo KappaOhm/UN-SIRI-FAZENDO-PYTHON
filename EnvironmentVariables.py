@@ -1,7 +1,7 @@
 SERVER_ID = 693278533899780117
 
 DUNGEON_TEXT_CHANNEL_ID = 874056987430780939
-LOBBY_TEXT_CHANNEL_I = 693278534642171957
+LOBBY_TEXT_CHANNEL_ID = 693278534642171957
 SIRI_CHAT_TEXT_CHANNEL_ID  = 693278534642171957
 RED_ROOM_TEXT_CHANNEL_ID = 909837786415267841
 SHITPOST_TEXT_CHANNEL_ID = 874373777797046312
@@ -22,21 +22,21 @@ SALES_ROLE_ID       = 882360458978422804
 SURVIVAL_ROLE_ID    = 840714709535162378
 FPS_ROLE_ID         = 875118283521671228
 
-SIRI_FAZENDO_PLATA_EMOJI = "<:SiriFazendoPlata:939330425590018118>"
+SIRI_FAZENDO_PLATA_EMOJI = "<:SiriFazendoPlata:883917010260615188>"
 
 SECONDS_TO_DISCONNECT = 600
 
-voice_client_mimir = None
 voice_client_playing = None
-
 playing_mimir = False
 adding_song = False
 is_playlist = False
-
 songs_titles = []
 URL_queue = []
 song_playing = ""
-
+pending_pick = False
+image_rng_text = ""
+pick_message_object = None
+coin_amount = 0
                     #1,2,3,4,5,6, 7, 8, 9, 10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28, 29, 30
 COINS_PER_LVL = [0,0,5,5,5,5,10,15,20,25,30,20,20,20,20,25,30,30,30,30,35,40,40,40,40,40,40,50,100,125,200]
 
@@ -53,7 +53,20 @@ LVLUP_MESSASGES =['¡Felicidades!🥳🎉`',
                   '¡Como lo mueve esa muchachota!💅`'
 ]
 
+YDL_OPTIONS = {
+  'format': 'bestaudio',
+  'default_search': 'auto'
+  }
+
+FFMPEG_OPTIONS = {
+    'before_options':
+    '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
+    'options': '-vn'
+}
+
 SIRI_IMAGE = "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/95fa93bc-bb27-45ae-ab2f-680ea92bd79e/deqbwof-3e625c35-29d3-48bf-9180-9d810de75b35.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzk1ZmE5M2JjLWJiMjctNDVhZS1hYjJmLTY4MGVhOTJiZDc5ZVwvZGVxYndvZi0zZTYyNWMzNS0yOWQzLTQ4YmYtOTE4MC05ZDgxMGRlNzViMzUucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.jBtTOS2i26MbSWyEot-40E6ZjLXeWH9snECMaWVEj2w"
+
+not_allowed_channel_ids =[997188421078483064]
 
 bomdia_messages =['¡Hola Bom Día!⭐',
                   'Eu gostaria que você pudesse desfrutar de um dia inesquecível. Com esta mensagem, eu não só lhe desejo um bom dia, mas também desejo que possamos nos ver o mais rapidamente possível, para que os segundos parem de parecer horas🐒',
@@ -110,18 +123,6 @@ bomdia_gifs =['https://media.tenor.com/images/0c9d88ea6c328802517f38501aa77d64/t
                 'https://tenor.com/view/dragon-maid-tohru-in-love-cute-anime-gif-14096577',
                 'https://tenor.com/view/tohru-kobayashisan-chi-no-maid-dragon-dragon-maid-happy-in-love-gif-12390510'
 ]
-
-
-YDL_OPTIONS = {
-  'format': 'bestaudio',
-  'default_search': 'auto'
-  }
-
-FFMPEG_OPTIONS = {
-    'before_options':
-    '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
-    'options': '-vn'
-}
 
 welcome_gifs = [
     'https://tenor.com/view/good-morning-gif-18894104',

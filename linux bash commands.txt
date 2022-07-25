@@ -5,9 +5,11 @@ nohup python3 -u SiriMain.py &
 ps -ef | grep python
 
 ** install
+pip install Pillow
+pip install discord
 pip install -U "discord.py[voice]"
+pip3 install discord-components
 pip install -U youtube-dl
 pip install ffmpeg-python
 pip3 install requests
-pip3 install discord-components
 pip install --upgrade chardet
