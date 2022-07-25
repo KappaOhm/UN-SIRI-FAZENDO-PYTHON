@@ -25,7 +25,7 @@ class LevelSystem:
         with open('users.json', 'w') as f:
             json.dump(users, f)
 
-    async def plant_coins(channel):
+    async def plant_coins(channel,password):
             global pick_message_object
             global image_rng_text
             global coin_amount
@@ -39,7 +39,7 @@ class LevelSystem:
 
             image_to_pick = Image.open(BytesIO(requests.get(gif_png_url).content))
             
-            image_rng_text=str(uuid.uuid4())[9:13]
+            image_rng_text=str(uuid.uuid4())[9:13] if password is None else password
             font_size = int(0.1*image_size[0]) if image_size[0] > image_size[1] else int(0.1*image_size[1])
             text_font = ImageFont.truetype("impact.ttf", font_size)
             drawOnImage = ImageDraw.Draw(image_to_pick)
@@ -53,9 +53,6 @@ class LevelSystem:
                 message_text ="Han aparecido"+ str(coin_amount) +' ' + SIRI_FAZENDO_PLATA_EMOJI + " siri coins, escribe .pick + código para atraparlas"
             pick_message_object = await channel.send(message_text,file=discord.File('lastpick.png'))
             return True,image_rng_text,pick_message_object,coin_amount
-
-    async def try_pick(channel):
-        print('')
 
     async def bet_par_impar(message, identifier):
         users = await LevelSystem.read_users_data()
@@ -100,11 +97,9 @@ class LevelSystem:
             users[user]['experience'] = 0
             users[user]['level'] = 1
             users[user]['coins'] = 0
-
-
+            
     async def add_experience(users, user, xp):
         users[user]['experience'] += xp
-
 
     async def level_up(users, user, channel,client):
         xp = users[str(user.id)]['experience']
@@ -128,7 +123,6 @@ class LevelSystem:
                 random_index = randint(0, len(LVLUP_MESSASGES) - 1)
                 await channel.send("{} `ha subido al nivel {} - Recibes {}`".format(user.mention, level_end, COINS_PER_LVL[level_end]) + SIRI_FAZENDO_PLATA_EMOJI + "` monedas " + LVLUP_MESSASGES[random_index])
                 await LevelSystem.write_users_data(users)
-
                 await LevelSystem.check_xp(None, user, channel)
 
 
@@ -143,7 +137,7 @@ class LevelSystem:
             next_lvl_xp = 47.2298*(2*(user_lvl+1)- 3)**(20/11)
             current_lvl_base_xp = 47.2298*(2*(user_lvl)- 3)**(20/11)
 
-            title = TITLES_PER_LVL[user_lvl]
+            title_in_level = TITLES_PER_LVL[user_lvl]
 
             old_min = int(current_lvl_base_xp)
             old_max =  int(next_lvl_xp)
@@ -152,12 +146,12 @@ class LevelSystem:
             embedVar = discord.Embed(
                 title=user.display_name, description='', color=0xFFA500)
             embedVar.set_thumbnail(url=user.avatar_url)
-            embedVar.add_field(name=title, value="XP : " +
-                            str(user_xp), inline=True)
-            embedVar.add_field(name="Monedas :", value=str(
-                users[str(user.id)]['coins']) + SIRI_FAZENDO_PLATA_EMOJI, inline=True)
+            embedVar.add_field(name=title_in_level, value = "XP : " + str(user_xp), inline=True)
+            embedVar.add_field(name="Monedas :", value = str(users[str(user.id)]['coins']) + SIRI_FAZENDO_PLATA_EMOJI, inline=True)
+            if 'bd' in users[str(user.id)]:
+                embedVar.add_field(name="Cumpleaños 🎂", value = str(users[str(user.id)]['bd']), inline=False)
             embedVar.add_field(name="LVL " + str(user_lvl) + " ------------------> " + " LVL " + str(user_lvl+1),
-                            value=progress_current_lvl * ":orange_heart:" + (10-progress_current_lvl) * ":white_heart:", inline=False)
+                            value = progress_current_lvl * ":orange_heart:" + (10-progress_current_lvl) * ":white_heart:", inline=False)
             await channel.send(embed=embedVar)
             await LevelSystem.write_users_data(users)
         else:

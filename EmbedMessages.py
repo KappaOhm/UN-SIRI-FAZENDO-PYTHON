@@ -11,9 +11,9 @@ class EmbedMessages:
         embedVar = discord.Embed(title=def_title,
                                 description=def_description,
                                 color=0xFFA500)
-        await channel.send(embed=embedVar)
+        return await channel.send(embed=embedVar)
 
-    async def send_play_embed_msg(channel, title, description):
+    async def play_embed_msg(channel, title, description):
         global last_reply_msg
 
         def_description = description if description is not None else ''
@@ -31,12 +31,18 @@ class EmbedMessages:
         last_reply_msg = msg 
 
     # EMBEDIDO CON LOS COMANDOS DE MUSICA AL USAR .help
-    async def send_embed_help_msg(message):
+    async def help_embed_msg(message):
         embedVar = discord.Embed(title="Lista de comandos",
                                 description="Estos son los comandos disponibles de un siri fanzendo barra",
                                 color=0xFFA500)
         embedVar.set_author(name="by KappaOhm")
         embedVar.set_thumbnail(url=SIRI_IMAGE)
+        embedVar.add_field(
+            name=".cmd", value="Muestra comandos relacionados a XP y monedas", inline=False)
+        embedVar.add_field(
+            name=".setcum", value="Registra tu propio cumpleaños indicando el mes y día (MM-DD)", inline=False)
+        embedVar.add_field(
+            name=".deletecum", value="Si quieres borrar el registro de tu cumpleaños", inline=False)        
         embedVar.add_field(
             name=".gif", value="Seguido de un termino de busqueda hace que siri busque y responda con un GIF relacionado", inline=False)
         embedVar.add_field(
@@ -53,12 +59,10 @@ class EmbedMessages:
             name=".q", value="Muestra la cola 😈 (de reproducción)", inline=False)
         embedVar.add_field(
             name=".leave", value="Desconecta a siri del chat de voz", inline=False)
-        embedVar.add_field(
-            name=".cmd", value="Muestra comandos relacionados a XP y monedas", inline=False)
         await message.channel.send(embed=embedVar)
     
     # EMBEDIDO CON LOS COMANDOS ALREDEDOR DE XP Y MONEDAS AL USAR .cmd
-    async def send_embed_cmd_msg(message):
+    async def cmd_embed_msg(message):
         embedVar = discord.Embed(title="Lista de comandos relacionados a XP y monedas",
                                 description="",
                                 color=0xFFA500)

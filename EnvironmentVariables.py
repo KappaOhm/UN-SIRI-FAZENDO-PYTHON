@@ -1,16 +1,15 @@
 SERVER_ID = 693278533899780117
+OWNER_ID  = 268991138310914048
+BOT_ID    = 875112526151577670
 
-DUNGEON_TEXT_CHANNEL_ID = 874056987430780939
-LOBBY_TEXT_CHANNEL_ID = 693278534642171957
-SIRI_CHAT_TEXT_CHANNEL_ID  = 693278534642171957
-RED_ROOM_TEXT_CHANNEL_ID = 909837786415267841
+DUNGEON_TEXT_CHANNEL_ID      = 100000000000000000
+LOBBY_TEXT_CHANNEL_ID        = 693278534642171957
+SIRI_CHAT_TEXT_CHANNEL_ID    = 693278534642171957
+RED_ROOM_TEXT_CHANNEL_ID     = 909837786415267841
 ALT_RED_ROOM_TEXT_CHANNEL_ID = 874297345599238154
-SHITPOST_TEXT_CHANNEL_ID = 874373777797046312
+SHITPOST_TEXT_CHANNEL_ID     = 874373777797046312
 
-MESSAGE_FOR_ROLE_ID     = 945245431766601769
-
-OWNER_ID    = 268991138310914048
-BOT_ID      = 875112526151577670
+MESSAGE_FOR_ROLE_ID = 945245431766601769
 
 AMATEUR_ROLE_ID     = 840714667008720917
 SAFADOS_ROLE_ID     = 874016688247562260
@@ -24,20 +23,23 @@ SURVIVAL_ROLE_ID    = 840714709535162378
 FPS_ROLE_ID         = 875118283521671228
 
 SIRI_FAZENDO_PLATA_EMOJI = "<:SiriFazendoPlata:883917010260615188>"
-
+SIRI_IMAGE = SIRI_IMAGE = "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/95fa93bc-bb27-45ae-ab2f-680ea92bd79e/deqbwof-3e625c35-29d3-48bf-9180-9d810de75b35.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzk1ZmE5M2JjLWJiMjctNDVhZS1hYjJmLTY4MGVhOTJiZDc5ZVwvZGVxYndvZi0zZTYyNWMzNS0yOWQzLTQ4YmYtOTE4MC05ZDgxMGRlNzViMzUucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.jBtTOS2i26MbSWyEot-40E6ZjLXeWH9snECMaWVEj2w"
 SECONDS_TO_DISCONNECT = 600
 
+pick_message_object = None
 voice_client_playing = None
-playing_mimir = False
+
 adding_song = False
 is_playlist = False
+pending_pick = False
+
 songs_titles = []
 URL_queue = []
+
 song_playing = ""
-pending_pick = False
 image_rng_text = ""
-pick_message_object = None
 coin_amount = 0
+chance = 4
                     #1,2,3,4,5,6, 7, 8, 9, 10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28, 29, 30
 COINS_PER_LVL = [0,0,5,5,5,5,10,15,20,25,30,20,20,20,20,25,30,30,30,30,35,40,40,40,40,40,40,50,100,125,200]
 
@@ -46,28 +48,44 @@ TITLES_PER_LVL = ["Noob","Noob","Noob","Mera tía","Aprendiz","Amateur", #1-5
                     "Diva","Bichota","Bichota","Bichota","Arrechx", #11-15
                     "Arrechx","Arrechx","xxx","xxx","xxx", #16-20
                     "Master","Master","Leyenda","Leyenda","ski lo mama", #21-25
-                    "Admin","Admin","Super Admin","Mega Admin","Giga Admin"] #26-30
+                    "Admin","Admin","Super Admin","Mega Admin","Giga Admin" #26-30
+                ]
 
 LVLUP_MESSASGES =['¡Felicidades!🥳🎉`',
                   '¡Tudo um conchesumadre!🐒`',
                   '¡Eso bichota!💅`',
                   '¡Como lo mueve esa muchachota!💅`'
-]
+                    ]
 
 YDL_OPTIONS = {
   'format': 'bestaudio',
   'default_search': 'auto'
-  }
+    }
 
 FFMPEG_OPTIONS = {
     'before_options':
     '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
     'options': '-vn'
-}
+    }
 
-SIRI_IMAGE = "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/95fa93bc-bb27-45ae-ab2f-680ea92bd79e/deqbwof-3e625c35-29d3-48bf-9180-9d810de75b35.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzk1ZmE5M2JjLWJiMjctNDVhZS1hYjJmLTY4MGVhOTJiZDc5ZVwvZGVxYndvZi0zZTYyNWMzNS0yOWQzLTQ4YmYtOTE4MC05ZDgxMGRlNzViMzUucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.jBtTOS2i26MbSWyEot-40E6ZjLXeWH9snECMaWVEj2w"
+not_allowed_channel_ids =[DUNGEON_TEXT_CHANNEL_ID]
 
-not_allowed_channel_ids =[997188421078483064]
+cum_messsages =[ 'Bolos de mamão para você 🍰 ¡Feliz cum! ',
+                 'Entre más vieja la pasa más sabrosa es la fruta 🥵 ¡Feliz cumpleaños! ',
+                 'Parabéns querido amigo. Você nunca será tão jovem novamente, então aproveite 🎉'
+                ]
+
+cum_images=['https://media1.tenor.com/images/695be54002b18bcc4fb10396945d9730/tenor.gif?itemid=26302039',
+            'https://c.tenor.com/8b7jfGD9lb8AAAAC/happy-birthday-birthday-cake.gif',
+            'https://c.tenor.com/1M47Ae-a_2UAAAAC/bob-esponja-las-mananitas.gif',
+            'https://c.tenor.com/ol9MSbL43VgAAAAC/happy-birthday.gif',
+            'https://c.tenor.com/oJneSXnNGecAAAAC/happy-birthday.gif',
+            'https://media4.giphy.com/media/9rO5Aksmn0dHQKXJAu/giphy.gif?cid=790b7611c00252b4856982538886c8e669a0481d322fe39b&rid=giphy.gif&ct=g',
+            'https://giphy.com/gifs/lazy-corgi-OSOOHw7N9gb3R06OU7',
+            'https://media2.giphy.com/media/xT0BKxnpSJmgU3KtAk/giphy.gif?cid=790b7611cb33a98a5fe7e389e1ba67b81ae51a1ee7c85e97&rid=giphy.gif&ct=g',
+            'https://media3.giphy.com/media/mcJohbfGPATW8/giphy.gif?cid=790b7611a433b7adf4410f71edafe0faa553b9a14f4ab3ca&rid=giphy.gif&ct=g',
+            'https://i.pinimg.com/564x/3d/9f/05/3d9f059e6dd638dc192febbca9b536a6.jpg'
+            ]
 
 bomdia_messages =['¡Hola Bom Día!⭐',
                   'Eu gostaria que você pudesse desfrutar de um dia inesquecível. Com esta mensagem, eu não só lhe desejo um bom dia, mas também desejo que possamos nos ver o mais rapidamente possível, para que os segundos parem de parecer horas🐒',
@@ -102,28 +120,34 @@ bomdia_messages =['¡Hola Bom Día!⭐',
                   '🌺Desejo a você toda felicidade e amor do mundo, um lindo dia, e que tudo seja lindo e positivo. Eu te amo muito e tenha um feliz dia🌺',
                   '🌺Desejo a você toda felicidade e amor do mundo, um lindo dia, e que tudo seja lindo e positivo. Eu te amo muito e tenha um feliz dia🌺',
                   '🔮Desejo a você um dia maravilhoso cheio de momentos felizes🔮'   
-]
+                ]
 
 bomdia_gifs =['https://media.tenor.com/images/0c9d88ea6c328802517f38501aa77d64/tenor.gif',
                 'https://tenor.com/view/cute-anime-wave-hi-hello-gif-8807701',
-                'https://tenor.com/view/cute-anime-anime-girl-uwu-anime-cat-girl-gif-23139995',
+                'https://tenor.com/view/to-love-ru-lala-deviluke-anime-tail-waving-gif-15113196',
                 'https://tenor.com/view/neko-anime-kawaii-nya-hi-gif-14223397',
                 'https://tenor.com/view/hello-hi-wave-anime-gif-11503720',
                 'https://tenor.com/view/anime-hi-girl-wave-hello-gif-5142315',
+                'https://tenor.com/view/love-heart-gif-22449692',
                 'https://tenor.com/view/anime-girl-run-fall-hi-gif-23177143',
+                'https://tenor.com/view/panties-skirt-anime-butt-booty-gif-15810147',
                 'https://tenor.com/view/anime-hey-hello-peek-smile-gif-17556391',
-                'https://tenor.com/view/hello-gif-18163988',
+                'https://tenor.com/view/cat-pussy-gif-5284960',
+                'https://tenor.com/view/momo-and-rito-to-love-ru-momo-and-rito-cuddle-gif-18845471',
                 'https://tenor.com/view/hello-wave-cute-anime-cartoon-gif-7537923',
+                'https://tenor.com/view/hey-chat-hello-chat-anime-gif-21088710',
+                'https://tenor.com/view/corgi-jump-hi-hey-hello-gif-4505201',
+                'https://tenor.com/view/anime-girl-wink-flirty-hibike-euphonium-gif-5364920',
+                'https://tenor.com/view/hi-hey-gif-21307782',
+                'https://tenor.com/view/redo-of-healer-redo-of-a-healer-redo-of-the-healer-anime-anime-girl-gif-20602961',
                 'https://tenor.com/view/komi-san-ily-gif-23488189',
+                'https://tenor.com/view/crab-rave-mmd-v-tuber-alymew-alymew-dance-gif-22688312',
                 'https://tenor.com/view/anime-anime-girl-girl-cat-gif-18514354',
                 'https://tenor.com/view/shera-elf-anime-gif-16600170',
+                'https://tenor.com/view/hihi-gif-18680839',
                 'https://tenor.com/view/hug-anime-anime-cuddle-gif-17789646',
-                'https://tenor.com/view/ishtar-butt-ass-booty-walking-gif-15972409',
-                'https://tenor.com/view/boobs-ecchi-anime-heart-gif-15899467',
-                'https://tenor.com/view/tohru-kobayashisan-chi-no-maid-dragon-dragon-maid-thumbs-up-gif-12390446',
-                'https://tenor.com/view/dragon-maid-tohru-in-love-cute-anime-gif-14096577',
-                'https://tenor.com/view/tohru-kobayashisan-chi-no-maid-dragon-dragon-maid-happy-in-love-gif-12390510'
-]
+                'https://tenor.com/view/boobs-ecchi-anime-heart-gif-15899467'
+            ]
 
 welcome_gifs = [
     'https://tenor.com/view/good-morning-gif-18894104',
@@ -148,18 +172,23 @@ redroom_responses = [
     'https://tenor.com/view/anime-smug-face-smug-anime-girl-smug-smug-face-smug-smile-gif-23765538',
     'https://tenor.com/view/anime-yummy-ara-seduced-gif-18335383',
     'https://tenor.com/view/seal-approval-seal-of-approval-sea-lion-gif-5057575',
-    'https://cdn.discordapp.com/attachments/874056987430780939/893516560055025705/244219598_1010028739538390_6876485998943931717_n.png',
     'https://tenor.com/view/anime-blushing-lewd-shimoneta-hot-gif-5453531',
+    'https://tenor.com/view/marty1234-gif-7333564',
+    'https://tenor.com/view/yes-anime-evil-smile-gif-11514563',
     'https://tenor.com/view/horny-anime-gif-19368853',
+    'https://tenor.com/view/vrchat-shana-vrchat-shana-lick-licking-gif-14110643',
+    'https://tenor.com/view/azur-lane-chibi-shouting-mad-angry-gif-15485754',
     'https://c.tenor.com/HiboJY9qehoAAAAC/nut-button-press.gif',
-    'https://c.tenor.com/3nAdVLDwDxkAAAAC/anime-swinging.gif',
     'https://tenor.com/view/cum-cum-mode-anime-cum-mode-anime-cum-cum-anime-gif-22504000',
+    'https://tenor.com/view/cum-cum-mode-anime-cum-mode-anime-cum-cum-anime-gif-22504000',
+    'https://c.tenor.com/3nAdVLDwDxkAAAAC/anime-swinging.gif',
     'https://tenor.com/view/smug-anime-gif-10199270',
     'https://tenor.com/view/sailor-moon-gif-22468266',
     'https://tenor.com/view/yuru-yuri-gif-20021302',
     'https://tenor.com/view/kyouko-toshinou-yuru-yuri-smug-smile-laugh-gif-13909640',
     'https://tenor.com/view/anime-gif-20554208',
     'https://tenor.com/view/shake-girl-lewd-gif-15781464',
+    'https://tenor.com/view/spy-x-family-anya-anya-forger-anya-spy-x-family-anya-spy-x-family-anime-gif-25679849',
     'https://tenor.com/view/thumbs-up-gif-20749336'
     ]
 

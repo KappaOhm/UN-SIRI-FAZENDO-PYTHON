@@ -1,8 +1,8 @@
 # IMPORTS
 import asyncio
+import calendar
 import os
-from asyncio import sleep
-from datetime import datetime
+from datetime import date, datetime
 from random import randint, shuffle
 
 import discord
@@ -32,14 +32,6 @@ async def on_ready():
     print(dir_path)
     print('---------------------------')
 
-# TEST DE BUTTON COMPONENTS
-@client.event
-async def on_button_click(interaction):
-    if interaction.component.custom_id == "yes":
-        await interaction.respond(content = "¡Tú sí sabes!",ephemeral =True)
-    if interaction.component.custom_id == "no":
-        await interaction.send(content = "Chale, aguafiestas...",ephemeral =True)     
-
 # TAREA QUE SE CORRE CADA 24 HORAS, PARA HACER QUE EL BOT ENVIE UN MENSAJE TODOS LOS DIAS A UNA HORA ESPECIFICA  
 @tasks.loop(hours=24)
 async def called_once_a_day():
@@ -48,7 +40,20 @@ async def called_once_a_day():
     random_index2 = randint(0, len(bomdia_gifs) - 1)
     await EmbedMessages.send_embed_msg(channel,None,bomdia_messages[random_index1])
     await channel.send(bomdia_gifs[random_index2])
-    #await reply_messages.reply_with_GIF(channel,".gif anime lewd",None)
+    #await ReplyMessages.process_messages(channel,".gif bom dia",None)
+
+    #REVISAR CUMPLEAÑOS
+    users = await LevelSystem.read_users_data()
+    for user in users:
+        today = str(date.today())
+        today_no_year = today[len('YYYY-'):]
+        month_name = calendar.month_name[int(today_no_year[:len(today_no_year)-len('-DD')])]
+        mont_day = today_no_year[len('MM-'):]
+        if 'bd' in users[user] and users[user]['bd'] == month_name + " " + mont_day:
+            random_index1 = randint(0, len(cum_messsages) - 1)
+            random_index2 = randint(0, len(cum_images) - 1)
+            await EmbedMessages.send_embed_msg(channel,None,cum_messsages[random_index1] +client.get_user(int(user)).mention )
+            await channel.send(cum_images[random_index2])
 
 @called_once_a_day.before_loop
 async def before():
@@ -61,12 +66,12 @@ async def before():
         hours_left = (24-int(current_time[0:2]))+12
     print("Waiting {} hours to send daily message".format(hours_left))
     print('---------------------------')
-    await sleep(hours_left*60*60)
+    await asyncio.sleep(hours_left*60*60)
     print("Finished waiting")
 
 # DESCONECTAR EL BOT SI DADOS X SEGUNDOS NO HA REPRODUCIDO NADA
 async def auto_disconnect(channel):
-    await sleep(SECONDS_TO_DISCONNECT)
+    await asyncio.sleep(SECONDS_TO_DISCONNECT)
     if voice_client_playing is not None and not voice_client_playing.is_playing():
         await EmbedMessages.send_embed_msg(channel, None, "Me voy por inactividad ⏱️")
         await voice_client_playing.disconnect() 
@@ -98,7 +103,7 @@ async def play_song(channel, URL):
     global song_playing
 
     current_song_title = songs_titles[0]
-    await EmbedMessages.send_play_embed_msg(channel, "🤟 Reproduciendo", current_song_title)
+    await EmbedMessages.play_embed_msg(channel, "🤟 Reproduciendo", current_song_title)
     songs_titles.pop(0)
 
     song_playing = current_song_title
@@ -166,6 +171,7 @@ async def on_message(message):
     global image_rng_text
     global pick_message_object
     global coin_amount
+    global chance
 
     # IGNORAR MENSAJES DE BOTS, TANTO SIRI COMO OTROS
     if message.author == client.user or message.author.bot:
@@ -176,9 +182,13 @@ async def on_message(message):
     channel = message.channel
    
     await ReplyMessages.process_messages(channel,text,message)
+
+    # CAMBIAR LA PROBABILIDAD DE QUE SIRI PLANTE COINS
+    if text.startswith('.setchance') and message.author.id == OWNER_ID:
+        chance = int(text[len('.setchance')+1:])
+        await message.add_reaction('✨')  
         
     # SISTEMA DE XP POR MENSAJES
-
     # SOLO MENSAJES DE MÁS DE 10 CARACTERES CUENTAN PARA XP
     if channel.id != DUNGEON_TEXT_CHANNEL_ID and (len(text) > 10 or len(message.attachments) > 0):
 
@@ -189,34 +199,46 @@ async def on_message(message):
 
         # PLANTAR SIRI COINS
         if channel.id not in not_allowed_channel_ids and pending_pick==False:
-            chance = 5 # %
-            if randint(1, 101) + chance > 100:
-                pending_pick,image_rng_text,pick_message_object,coin_amount = await LevelSystem.plant_coins(channel)
+            if (randint(1, 100) + chance) > 100:
+                pending_pick,image_rng_text,pick_message_object,coin_amount = await LevelSystem.plant_coins(channel,None)
             
         await LevelSystem.update_data(users, str(message.author.id))
         await LevelSystem.add_experience(users, str(message.author.id), xp_points)
         await LevelSystem.level_up(users, message.author, channel,client)
 
         await LevelSystem.write_users_data(users)
-
+        
     # INTENTAR HACER UN PICK DE SIRI COINS
     if pick_message_object is not None:
         if channel.id not in not_allowed_channel_ids and channel.id == pick_message_object.channel.id and pending_pick==True and text.startswith('.pick'):
             if text == (".pick " + image_rng_text):
                 pending_pick = False
-
+                await pick_message_object.delete()
+                
                 users = await LevelSystem.read_users_data()
                 user = message.author
                 users[str(user.id)]['coins'] += coin_amount
                 await LevelSystem.write_users_data(users)
                 
-                await pick_message_object.delete()
-                embedVar = discord.Embed(title='',
-                                    description=message.author.mention + ' atrapó las siri coins' +SIRI_FAZENDO_PLATA_EMOJI,
-                                    color=0xFFA500)
-                msg = await channel.send(embed=embedVar)
+                msg = await EmbedMessages.send_embed_msg(channel,None,message.author.mention + ' atrapó las siri coins' +SIRI_FAZENDO_PLATA_EMOJI)
                 await asyncio.sleep(8)
+                await message.delete()
                 await msg.delete()
+
+    # DAR MONEDAS
+    if text.startswith('.award') and message.author.id == OWNER_ID:
+        users = await LevelSystem.read_users_data()
+        number_of_coins = int(text[len('.award')+1:])
+        user = message.mentions[0] 
+        users[str(user.id)]['coins'] += number_of_coins
+        await channel.send(user.mention)
+        await EmbedMessages.send_embed_msg(channel, None, "¡Te han otorgado " + str(number_of_coins) + "" + SIRI_FAZENDO_PLATA_EMOJI + " monedas!")
+        await LevelSystem.write_users_data(users)
+
+    # PLANTAR MONEDAS
+    if text.startswith('.plant') and message.author.id == OWNER_ID and pending_pick==False:
+        password = text[len('.plant')+1:]
+        pending_pick,image_rng_text,pick_message_object,coin_amount = await LevelSystem.plant_coins(channel,password)
 
     # COMANDO PARA REVISAR EXPERIENCIA PROPIA O DE OTRO USUARIO
     if text.startswith('.xp'):
@@ -236,17 +258,33 @@ async def on_message(message):
     # COMANDO APOSTAR POR IMPAR
     if text.startswith('.impar') and channel.id == SIRI_CHAT_TEXT_CHANNEL_ID:
         await LevelSystem.bet_par_impar(message, 1)
+          
+    # SETEAR UN CUMPLEAÑOS (bd)    
+    if text.startswith('.setcum'):
+        
+        try:
+            users = await LevelSystem.read_users_data()
+            bd_date = text[len(text)-len('MM-DD'):]
+            month_name = calendar.month_name[int(bd_date[:len(bd_date)-len('-DD')])]
+            mont_day = bd_date[len('MM-'):]
+            user = message.mentions[0] if message.mentions else message.author
+            users[str(user.id)]['bd'] = month_name + " " + mont_day
+            await message.add_reaction('🎂')
+            await message.add_reaction('✨')
+            await LevelSystem.write_users_data(users)
+            await LevelSystem.check_xp(None, user, channel)
+        except :
+            await EmbedMessages.send_embed_msg(channel, None, "Ocurrio un error, quizas no usaste el formato adecuado u.u")
 
-    # DAR MONEDAS
-    if text.startswith('.award') and message.author.id == OWNER_ID:
+    # SETEAR UN CUMPLEAÑOS (bd)    
+    if text.startswith('.deletecum'):
+        
         users = await LevelSystem.read_users_data()
-        number_of_coins = int(text[len(text)-2:len(text)])
-        user = message.mentions[0]
-        users[str(user.id)]['coins'] += number_of_coins
-        await channel.send(user.mention)
-        await EmbedMessages.send_embed_msg(channel, None, "¡Te han otorgado " + str(number_of_coins) + "" + SIRI_FAZENDO_PLATA_EMOJI + " monedas!")
+        user = message.mentions[0] if message.mentions else message.author
+        del users[str(user.id)]['bd']
+        await message.add_reaction('☑️')
         await LevelSystem.write_users_data(users)
-
+        
     if text.startswith('.testbutton'):
         button1 = Button(label="Sí ", style=3, emoji='🤠',custom_id="yes")
         button2 = Button(label="No ", style=4, emoji='😔',custom_id="no")
@@ -430,7 +468,7 @@ async def on_member_update(memberBefore, memberAfter):
         await memberAfter.add_roles(role)
         print("Added welcome role: ", role)
         channel = guild.get_channel(LOBBY_TEXT_CHANNEL_ID)
-        await sleep(2)
+        await asyncio.sleep(2)
         random_index = randint(0, len(welcome_gifs) - 1)
         await channel.send(client.get_user(memberAfter.id).mention)
         await channel.send(welcome_gifs[random_index])
@@ -452,6 +490,14 @@ async def on_raw_reaction_remove(payload):
     if is_for_roles:
         await HandleRoles.remove_or_add_role(client,payload,False)
 
+# TEST DE BUTTON COMPONENTS
+@client.event
+async def on_button_click(interaction):
+    if interaction.component.custom_id == "yes":
+        await interaction.respond(content = "¡Tú sí sabes!",ephemeral =True)
+    if interaction.component.custom_id == "no":
+        await interaction.send(content = "Chale, aguafiestas...",ephemeral =True)
+        
 # CORRER BOT
 called_once_a_day.start()
 client.run(BOT_TOKEN)

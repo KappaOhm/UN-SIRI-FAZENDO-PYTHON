@@ -42,11 +42,11 @@ class ReplyMessages:
                        
         # COMANDO DE AYUDA
         if text == '.help' or text == '.h' :
-            await EmbedMessages.send_embed_help_msg(original_message)
+            await EmbedMessages.help_embed_msg(original_message)
 
         # COMANDO DE COMANDOS XP Y MONEDAS
         if text == '.cmd':
-            await EmbedMessages.send_embed_cmd_msg(original_message)
+            await EmbedMessages.cmd_embed_msg(original_message)
 
         if text.startswith('.kickmsg'):
             try:
