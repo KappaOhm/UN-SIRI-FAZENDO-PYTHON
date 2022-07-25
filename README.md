@@ -81,6 +81,7 @@
 + ¡Siri puede responder con GIFs aleatorios a contenido de canales NSFW!
 + ¡Siri puede acompañar con música a los usuarios movidos automaticamente al canal de inactividad!
 + ¡Siri responde de manera graciosa a mensajes con un contenido especifico!
++ ¡Siri celebra los cumpleaños de los usuarios (si estos desean dar dicha informacion)!
 + ¡Siri puede hacer anuncios diarios a una hora especifica!
 + ¡Siri tiene juegos de azar para que los usuarios apuesten sus monedas!
 ```
