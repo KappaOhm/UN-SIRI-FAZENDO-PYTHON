@@ -72,18 +72,21 @@ not_allowed_channel_ids =[DUNGEON_TEXT_CHANNEL_ID]
 
 cum_messsages =[ 'Bolos de mamão para você 🍰 ¡Feliz cum! ',
                  'Entre más vieja la pasa más sabrosa es la fruta 🥵 ¡Feliz cumpleaños! ',
-                 'Parabéns querido amigo. Você nunca será tão jovem novamente, então aproveite 🎉'
+                 'Parabéns querido amigo. Você nunca será tão jovem novamente, então aproveite 🎉 ',
+                 'Um siri trajo pa vocē unos bolos de mamão🦀. Feliz cumple!🎂 ',
+                 'Estas son las mañanitas que cantaba el rey João👑, a las bichotas gostosas se las cantamos así: ¡Feliz cum!🎊'
                 ]
 
 cum_images=['https://media1.tenor.com/images/695be54002b18bcc4fb10396945d9730/tenor.gif?itemid=26302039',
             'https://c.tenor.com/8b7jfGD9lb8AAAAC/happy-birthday-birthday-cake.gif',
             'https://c.tenor.com/1M47Ae-a_2UAAAAC/bob-esponja-las-mananitas.gif',
+            'https://i.pinimg.com/564x/3d/9f/05/3d9f059e6dd638dc192febbca9b536a6.jpg',
             'https://c.tenor.com/ol9MSbL43VgAAAAC/happy-birthday.gif',
             'https://c.tenor.com/oJneSXnNGecAAAAC/happy-birthday.gif',
-            'https://media4.giphy.com/media/9rO5Aksmn0dHQKXJAu/giphy.gif?cid=790b7611c00252b4856982538886c8e669a0481d322fe39b&rid=giphy.gif&ct=g',
+            'https://i.giphy.com/media/9rO5Aksmn0dHQKXJAu/giphy.webp',
             'https://giphy.com/gifs/lazy-corgi-OSOOHw7N9gb3R06OU7',
-            'https://media2.giphy.com/media/xT0BKxnpSJmgU3KtAk/giphy.gif?cid=790b7611cb33a98a5fe7e389e1ba67b81ae51a1ee7c85e97&rid=giphy.gif&ct=g',
-            'https://media3.giphy.com/media/mcJohbfGPATW8/giphy.gif?cid=790b7611a433b7adf4410f71edafe0faa553b9a14f4ab3ca&rid=giphy.gif&ct=g',
+            'https://i.giphy.com/media/xT0BKxnpSJmgU3KtAk/giphy.webp',
+            'https://i.giphy.com/media/mcJohbfGPATW8/giphy.webp',
             'https://i.pinimg.com/564x/3d/9f/05/3d9f059e6dd638dc192febbca9b536a6.jpg'
             ]
 
