@@ -50,7 +50,7 @@ class LevelSystem:
             if coin_amount == 1:
                 message_text = "Ha aparecido "+ str(coin_amount) +' ' + SIRI_FAZENDO_PLATA_EMOJI + " siri coin, escribe .pick + código para atraparla"
             else:
-                message_text ="Han aparecido"+ str(coin_amount) +' ' + SIRI_FAZENDO_PLATA_EMOJI + " siri coins, escribe .pick + código para atraparlas"
+                message_text ="Han aparecido "+ str(coin_amount) +' ' + SIRI_FAZENDO_PLATA_EMOJI + " siri coins, escribe .pick + código para atraparlas"
             pick_message_object = await channel.send(message_text,file=discord.File('lastpick.png'))
             return True,image_rng_text,pick_message_object,coin_amount
 

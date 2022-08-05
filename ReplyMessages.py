@@ -67,7 +67,7 @@ class ReplyMessages:
                     'ocurrio un errorsinho con el comando "' + text + '" - escribe bien esa monda🦀🔪')
                     
         # RESPONDER A IMAGENES EN RED ROOM
-        if channel.id == RED_ROOM_TEXT_CHANNEL_ID or channel.id == ALT_RED_ROOM_TEXT_CHANNEL_ID and len(original_message.attachments) > 0:
+        if (channel.id == RED_ROOM_TEXT_CHANNEL_ID or channel.id == ALT_RED_ROOM_TEXT_CHANNEL_ID) and len(original_message.attachments) > 0:
                 random_number = randint(0, 99)
                 random_index = randint(0, len(redroom_responses) - 1)
                 if random_number < 15:
