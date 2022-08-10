@@ -277,7 +277,7 @@ async def on_message(message):
             await LevelSystem.write_users_data(users)
             await LevelSystem.check_xp(None, user, channel)
         except :
-            await EmbedMessages.send_embed_msg(channel, None, "Ocurrio un error, quizas no usaste el formato adecuado o una fecha valida u.u")
+            await EmbedMessages.send_embed_msg(channel, None, "Ocurrió un error, quizas no usaste el formato adecuado o una fecha válida u.u")
 
     # SETEAR UN CUMPLEAÑOS (bd)    
     if text.startswith('.deletecum'):
@@ -289,9 +289,9 @@ async def on_message(message):
         await LevelSystem.write_users_data(users)
         
     if text.startswith('.testbutton'):
-        button1 = Button(label="Sí ", style=3, emoji='🤠',custom_id="yes")
-        button2 = Button(label="No ", style=4, emoji='😔',custom_id="no")
-        await channel.send('¿Deberiamos banear a Ski?', components=[[button1,button2]])
+        button1 = Button(label="Sí ", style=3, emoji='😔',custom_id="yes")
+        button2 = Button(label="No ", style=4, emoji='🤠',custom_id="no")
+        await channel.send('¿Deberiamos invitar a Ski?', components=[[button1,button2]])
         
     # COMANDO PLAY
     if text.startswith('.play') or (text.startswith('.p') and ".par" not in text and ".plant" not in text and ".pick" not in text) and (channel.id == SIRI_CHAT_TEXT_CHANNEL_ID):
@@ -497,9 +497,9 @@ async def on_raw_reaction_remove(payload):
 @client.event
 async def on_button_click(interaction):
     if interaction.component.custom_id == "yes":
-        await interaction.respond(content = "¡Tú sí sabes!",ephemeral =True)
+        await interaction.respond(content = "Chale, aguafiestas...",ephemeral =True)
     if interaction.component.custom_id == "no":
-        await interaction.send(content = "Chale, aguafiestas...",ephemeral =True)
+        await interaction.send(content = "¡Tú sí sabes!",ephemeral =True)
         
 # CORRER BOT
 called_once_a_day.start()
