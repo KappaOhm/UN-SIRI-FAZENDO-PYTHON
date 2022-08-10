@@ -174,17 +174,17 @@ async def on_message(message):
     global chance
 
     # IGNORAR MENSAJES DE BOTS, TANTO SIRI COMO OTROS
-    if message.author == client.user or message.author.bot:
+    text = message.content
+    channel = message.channel
+    message_author = message.author
+    if message_author == client.user or message_author.bot:
         return
 
     # ELSE, EL MENSAJE NO VIENE DE NINGUN BOT
-    text = message.content
-    channel = message.channel
-   
     await ReplyMessages.process_messages(channel,text,message)
 
     # CAMBIAR LA PROBABILIDAD DE QUE SIRI PLANTE COINS
-    if text.startswith('.setchance') and message.author.id == OWNER_ID:
+    if text.startswith('.setchance') and message_author.id == OWNER_ID:
         chance = int(text[len('.setchance')+1:])
         await message.add_reaction('✨')  
         
@@ -202,31 +202,36 @@ async def on_message(message):
             if (randint(1, 100) + chance) > 100:
                 pending_pick,image_rng_text,pick_message_object,coin_amount = await LevelSystem.plant_coins(channel,None)
             
-        await LevelSystem.update_data(users, str(message.author.id))
-        await LevelSystem.add_experience(users, str(message.author.id), xp_points)
-        await LevelSystem.level_up(users, message.author, channel,client)
+        await LevelSystem.update_data(users, str(message_author.id))
+        await LevelSystem.add_experience(users, str(message_author.id), xp_points)
+        await LevelSystem.level_up(users, message_author, channel,client)
 
         await LevelSystem.write_users_data(users)
         
     # INTENTAR HACER UN PICK DE SIRI COINS
     if pick_message_object is not None:
         if channel.id not in not_allowed_channel_ids and channel.id == pick_message_object.channel.id and pending_pick==True and text.startswith('.pick'):
-            if text == (".pick " + image_rng_text):
+            if text.startswith(".pick") and message_author.id == JOTA_ID:
+                random_index = randint(0, len(sassy_messages) - 1)
+                await message.reply(sassy_messages[random_index])
+                
+            elif text == (".pick " + image_rng_text):
                 pending_pick = False
                 await pick_message_object.delete()
                 
                 users = await LevelSystem.read_users_data()
-                user = message.author
+                user = message_author
                 users[str(user.id)]['coins'] += coin_amount
                 await LevelSystem.write_users_data(users)
                 
-                msg = await EmbedMessages.send_embed_msg(channel,None,message.author.mention + ' atrapó las siri coins' +SIRI_FAZENDO_PLATA_EMOJI)
+                msg = await EmbedMessages.send_embed_msg(channel,None,message_author.mention + ' atrapó las siri coins' +SIRI_FAZENDO_PLATA_EMOJI)
                 await asyncio.sleep(8)
                 await message.delete()
                 await msg.delete()
 
+
     # DAR MONEDAS
-    if text.startswith('.award') and message.author.id == OWNER_ID:
+    if text.startswith('.award') and message_author.id == OWNER_ID:
         users = await LevelSystem.read_users_data()
         number_of_coins = int(text[len('.award')+1:])
         user = message.mentions[0] 
@@ -236,7 +241,7 @@ async def on_message(message):
         await LevelSystem.write_users_data(users)
 
     # PLANTAR MONEDAS
-    if text.startswith('.plant') and channel.id not in not_allowed_channel_ids and message.author.id == OWNER_ID and pending_pick==False:
+    if text.startswith('.plant') and channel.id not in not_allowed_channel_ids and message_author.id == OWNER_ID and pending_pick==False:
         password = text[len('.plant')+1:]
         await message.delete()
         pending_pick,image_rng_text,pick_message_object,coin_amount = await LevelSystem.plant_coins(channel,password)
@@ -244,7 +249,7 @@ async def on_message(message):
     # COMANDO PARA REVISAR EXPERIENCIA PROPIA O DE OTRO USUARIO
     if text.startswith('.xp'):
         if text == '.xp':
-            await LevelSystem.check_xp(None, message.author, channel)
+            await LevelSystem.check_xp(None, message_author, channel)
         else:
             await LevelSystem.check_xp(message, None, None)
 
@@ -270,7 +275,7 @@ async def on_message(message):
             month_name = calendar.month_name[month_number]
             mont_day = bd_date[len('MM-'):]
             datetime(2000,month_number,int(mont_day))
-            user = message.mentions[0] if message.mentions else message.author
+            user = message.mentions[0] if message.mentions else message_author
             users[str(user.id)]['bd'] = month_name + " " + mont_day
             await message.add_reaction('🎂')
             await message.add_reaction('✨')
@@ -283,7 +288,7 @@ async def on_message(message):
     if text.startswith('.deletecum'):
         
         users = await LevelSystem.read_users_data()
-        user = message.mentions[0] if message.mentions else message.author
+        user = message.mentions[0] if message.mentions else message_author
         del users[str(user.id)]['bd']
         await message.add_reaction('☑️')
         await LevelSystem.write_users_data(users)
@@ -296,10 +301,10 @@ async def on_message(message):
     # COMANDO PLAY
     if text.startswith('.play') or (text.startswith('.p') and ".par" not in text and ".plant" not in text and ".pick" not in text) and (channel.id == SIRI_CHAT_TEXT_CHANNEL_ID):
 
-        if message.author.voice is None:
+        if message_author.voice is None:
             await EmbedMessages.send_embed_msg(channel, None, "No estas en un canal de voz 🦀")
         else:
-            if voice_client_playing is not None and voice_client_playing.is_playing() and voice_client_playing.channel.id != message.author.voice.channel.id:
+            if voice_client_playing is not None and voice_client_playing.is_playing() and voice_client_playing.channel.id != message_author.voice.channel.id:
                 await EmbedMessages.send_embed_msg(channel, None, "Ya estoy ocupado en otro canal de voz🦀")
             else:
                 if text.startswith('.play'):
@@ -313,13 +318,13 @@ async def on_message(message):
                     URL = get_YT_info(url_song)
 
                     if is_playlist and voice_client_playing is None and len(URL_queue) > 0:
-                        voice_client_playing = await message.author.voice.channel.connect()
+                        voice_client_playing = await message_author.voice.channel.connect()
                         adding_song = True
                         await play_song(channel, URL_queue.pop(0))
 
                     else:
                         if voice_client_playing is None and adding_song == False:
-                            voice_client_playing = await message.author.voice.channel.connect()
+                            voice_client_playing = await message_author.voice.channel.connect()
                             adding_song = True
                             add_to_queue(adding_song, URL)
                         else:

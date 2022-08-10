@@ -1,11 +1,12 @@
 SERVER_ID = 693278533899780117
 OWNER_ID  = 268991138310914048
 BOT_ID    = 875112526151577670
+JOTA_ID   = 268991138310914048
 
 DUNGEON_TEXT_CHANNEL_ID      = 100000000000000000
 LOBBY_TEXT_CHANNEL_ID        = 693278534642171957
 SIRI_CHAT_TEXT_CHANNEL_ID    = 693278534642171957
-RED_ROOM_TEXT_CHANNEL_ID     = 909837786415267841
+RED_ROOM_TEXT_CHANNEL_ID     = 1005105355992334367
 ALT_RED_ROOM_TEXT_CHANNEL_ID = 874297345599238154
 SHITPOST_TEXT_CHANNEL_ID     = 874373777797046312
 
@@ -194,6 +195,15 @@ redroom_responses = [
     'https://tenor.com/view/spy-x-family-anya-anya-forger-anya-spy-x-family-anya-spy-x-family-anime-gif-25679849',
     'https://tenor.com/view/thumbs-up-gif-20749336'
     ]
+    
+sassy_messages = ['https://c.tenor.com/oC5iEd5wbjIAAAAC/cheerleader-side-eye.gif',
+                  'https://giphy.com/gifs/sassy-girl-OAng7sXS6cf7i',
+                  'https://imagenes.20minutos.es/files/image_990_v3/uploads/imagenes/2022/07/13/rosalia-meme.jpeg',
+                  'https://c.tenor.com/eeD-3cqVdRUAAAAC/dontbesad-buddy.gif',
+                  'https://pbs.twimg.com/media/E-UwpqMWEAEWvPn.jpg',
+                  'https://pbs.twimg.com/media/EyoVYRIXAAMoWV0.jpg'
+
+            ]
 
 contexto = ['te la comes sin pretexto 🤠',
             'Te la comés, la masticás, la tragás sin pretexto. Así no estés dispuesto, pero tal vez alguna vez te lo has propuesto, y te seré honesto, te haré el favor y te lo presto, tan fuerte que tal vez me den arresto. Ya no aguantás ni el sexto, así que lo dejamos pospuesto, pero te falta afecto y te lo dejo otra vez puesto, te aplasto en la pared como insecto tan duro que sale polvo de asbesto, llamo al arquitecto Alberto y al modesto Ernesto, y terminás más abierto que portón de asentamiento, ya no tenés más almacenamiento así que necesitás asesoramiento y a tu madre llamamos para darle su afecto así hasta el agotamiento y al siguiente día repetimos y hasta con repuesto, y te la meto sin pretexto, así no estés dispuesto, pero tal vez alguna vez te lo has propuesto, y te seré honesto te haré el favor y te lo presto, tan fuerte que tal vez me den arresto, ya no aguantás ni el sexto, así que lo dejamos pospuesto, pero te falta afecto y te lo dejo otra vez puesto, te aplasto en la pared como insecto tan duro que sale polvo de asbesto, llamo al arquitecto Alberto y al modesto Ernesto, y terminás más abierto que portón de asentamiento, ya no tenés más almacenamiento así que necesitás asesoramiento y a tu madre llamamos para darle su afecto así hasta el agotamiento y al siguiente día repetimos pero ya estás descompuesto así que para mí continuar sería incorrecto y me voy sin mostrar algún gesto, dispuesto a seguir apenas y ya estés compuesto voy y te doy el impuesto pero no sin antes avisarte que este es el contexto'
