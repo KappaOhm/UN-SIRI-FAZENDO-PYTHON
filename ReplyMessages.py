@@ -14,7 +14,7 @@ class ReplyMessages:
 
     async def process_messages(channel,text,original_message):
 
-        text_lowercase = text_lowercase
+        text_lowercase = text.lower()
         channel = original_message.channel
         
         if text.startswith('.gif'):
