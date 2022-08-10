@@ -14,6 +14,7 @@ class ReplyMessages:
 
     async def process_messages(channel,text,original_message):
 
+        text_lowercase = text_lowercase
         channel = original_message.channel
         
         if text.startswith('.gif'):
@@ -75,37 +76,37 @@ class ReplyMessages:
                     message_to_reply = await channel.fetch_message(original_message.id)
                     await message_to_reply.reply(redroom_responses[random_index])
 
-        if text.lower().startswith('siri'):
+        if text_lowercase.startswith('siri'):
             await channel.send('eu estou fazendo barra')
             await original_message.add_reaction('🦀')
 
-        if text.lower().startswith('hable paisa'):
+        if text_lowercase.startswith('hable paisa'):
             await channel.send('eso si jamaaaaaas')
 
-        if text.lower().startswith('https://tenor.com/view/') and re.search('[context]', text) != None:
+        if text_lowercase.startswith('https://tenor.com/view/') and re.search('[context]', text) != None:
             random_index = randint(0, len(contexto) - 1)
             await channel.send(contexto[random_index])
 
-        if text.lower().endswith('verde'):
+        if text_lowercase.endswith('verde'):
             await channel.send('agache y me lo muerde 🦀')
 
-        if text.lower().endswith('contexto'):
+        if text_lowercase.endswith('contexto'):
             random_index = randint(0, len(contexto) - 1)
             await channel.send(contexto[random_index])
 
-        if text.lower().endswith('context'):
+        if text_lowercase.endswith('context'):
             random_index = randint(0, len(context) - 1)
             await channel.send(context[random_index])
 
-        if text.lower().endswith('complejo'):
+        if text_lowercase.endswith('complejo'):
             await channel.send('complejo como mi cangrejo 🥵')
 
-        if text.lower().endswith('trece') or text == '12 + 1' or text == '12+1':
+        if text_lowercase.endswith('trece') or text == '12 + 1' or text == '12+1':
             await original_message.add_reaction('🥵')
             random_index = randint(0, len(trece) - 1)
             await channel.send(trece[random_index])
 
-        if text.lower().endswith('thirteen'):
+        if text_lowercase.endswith('thirteen'):
             await original_message.add_reaction('🥵')
             random_index = randint(0, len(thirteen) - 1)
             await channel.send(thirteen[random_index])
@@ -114,13 +115,13 @@ class ReplyMessages:
         #if re.search('[0-3]', text) != None:
         #    await channel.send('uwu')
 
-        if text.lower() == 'ocho' or text == '8' or text == '7+1' or text == '7 + 1':
+        if text_lowercase == 'ocho' or text == '8' or text == '7+1' or text == '7 + 1':
             await channel.send('por el culo te la enclocho 🤠')
 
-        if text.lower() == 'cinco'  or text == '5' or text == '4+1' or text == '4 + 1':
+        if text_lowercase == 'cinco'  or text == '5' or text == '4+1' or text == '4 + 1':
             await channel.send('por el culo te la hinco 🤠')
 
-        if text.lower() == 'mamelo' or text.lower() == 'mámelo' or text.lower() == 'a mamarlo' or text.lower() == 'me lo mama' or text.lower() == 'me lo tiene que mamar':
+        if text_lowercase == 'mamelo' or text_lowercase == 'mámelo' or text_lowercase == 'a mamarlo' or text_lowercase == 'me lo mama' or text_lowercase == 'me lo tiene que mamar':
             await original_message.add_reaction('🅰️')
             await original_message.add_reaction('🅱️')
             await original_message.add_reaction('🇪')
@@ -131,16 +132,16 @@ class ReplyMessages:
             await original_message.delete()
             await EmbedMessages.send_embed_msg(channel,None,text[8:len(text)])
 
-        if text.lower().endswith('verga'):
+        if text_lowercase.endswith('verga'):
             await original_message.add_reaction('😈')
             random_index = randint(0, len(verga) - 1)
             await channel.send(verga[random_index])
 
-        if text.lower().endswith('vergas'):
+        if text_lowercase.endswith('vergas'):
             await original_message.add_reaction('😈')
             random_index = randint(0, len(vergas) - 1)
             await channel.send(vergas[random_index])
 
-        if text.lower().endswith('dick') or text.lower().endswith('d1ck'):
+        if text_lowercase.endswith('dick') or text_lowercase.endswith('d1ck'):
             await original_message.add_reaction('😈')
             await channel.send('the one you eat ;)')

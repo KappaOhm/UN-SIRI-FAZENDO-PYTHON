@@ -264,7 +264,7 @@ async def on_message(message):
     if text.startswith('.setcum'):
         
         try:
-            users = await LevelSystem.readw_users_data()
+            users = await LevelSystem.read_users_data()
             bd_date = text[len(text)-len('MM-DD'):]
             month_number = int(bd_date[:len(bd_date)-len('-DD')])
             month_name = calendar.month_name[month_number]
