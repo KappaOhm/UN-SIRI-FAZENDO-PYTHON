@@ -83,10 +83,6 @@ class ReplyMessages:
         if text_lowercase.startswith('hable paisa'):
             await channel.send('eso si jamaaaaaas')
 
-        if text_lowercase.startswith('https://tenor.com/view/') and re.search('[context]', text) != None:
-            random_index = randint(0, len(contexto) - 1)
-            await channel.send(contexto[random_index])
-
         if text_lowercase.endswith('verde'):
             await channel.send('agache y me lo muerde 🦀')
 
@@ -121,7 +117,7 @@ class ReplyMessages:
         if text_lowercase == 'cinco'  or text == '5' or text == '4+1' or text == '4 + 1':
             await channel.send('por el culo te la hinco 🤠')
 
-        if text_lowercase == 'mamelo' or text_lowercase == 'mámelo' or text_lowercase == 'a mamarlo' or text_lowercase == 'me lo mama' or text_lowercase == 'me lo tiene que mamar':
+        if text_lowercase == 'mamelo' or text_lowercase == 'mamalo' or text_lowercase == 'a mamarlo' or text_lowercase == 'me lo mama' or text_lowercase == 'me lo tiene que mamar':
             await original_message.add_reaction('🅰️')
             await original_message.add_reaction('🅱️')
             await original_message.add_reaction('🇪')
