@@ -233,7 +233,7 @@ async def on_message(message):
     # DAR MONEDAS
     if text.startswith('.award') and message_author.id == OWNER_ID:
         users = await LevelSystem.read_users_data()
-        number_of_coins = int(text[len('.award')+1:])
+        number_of_coins = int(text[len('.award')+1:text.index("<")])
         user = message.mentions[0] 
         users[str(user.id)]['coins'] += number_of_coins
         await channel.send(user.mention)
