@@ -25,7 +25,7 @@ class HandleRoles:
                 elif payload.emoji.name == 'TomUhm':
                     role = discord.utils.get(guild.roles,
                                             id=SHITPOST_ROLE_ID)  # SHITPOST
-                elif payload.emoji.name == 'MeruMoney':
+                elif payload.emoji.name == 'MaruMoney':
                     role = discord.utils.get(guild.roles,
                                             id=SALES_ROLE_ID)  # OFERTAS
                 elif payload.emoji.name == 'MinecraftGrassBlock':

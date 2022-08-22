@@ -1,7 +1,6 @@
 SERVER_ID = 693278533899780117
 OWNER_ID  = 268991138310914048
 BOT_ID    = 875112526151577670
-JOTA_ID   = 268991138310914048
 
 DUNGEON_TEXT_CHANNEL_ID      = 100000000000000000
 LOBBY_TEXT_CHANNEL_ID        = 693278534642171957
@@ -110,7 +109,7 @@ bomdia_messages =['¡Hola Bom Día!⭐',
                   '🌱Seu tempo é limitado, então não o desperdice vivendo a vida de outra pessoa🌱',
                   '🌈Se você pensa que pode ou se você pensa que não pode, de qualquer forma, você tem toda a razão🌈',
                   '🌈Se você pensa que pode ou se você pensa que não pode, de qualquer forma, você tem toda a razão🌈',
-                  '💐Que todas as horas deste dia sejam repletas de alegria. Esqueça todas as tristezas de ontem e comece este novo dia com esperança e felicidade em seu coração💐'
+                  '💐Que todas as horas deste dia sejam repletas de alegria. Esqueça todas as tristezas de ontem e comece este novo dia com esperança e felicidade em seu coração💐',
                   '🐋Você nunca pode atravessar o oceano até que você tenha coragem de perder de vista a costa🐋',
                   '🍨O guerreiro de sucesso é um homem médio, mas com um foco apurado como um raio laser🍨',
                   '🐌Ter um amigo como você é mais do que uma bênção. Graças a você posso me levantar de manhã e começar este dia com um sorriso e com a motivação para realizar meus sonhos🐌'
@@ -182,7 +181,6 @@ welcome_gifs = [
 
 redroom_responses = [
     'https://tenor.com/view/mmm-blonde-gif-13403074',
-    'https://tenor.com/view/yeah-you-know-i-like-it-that-way-smile-pretty-gif-15791825',
     'https://tenor.com/view/lollipop-lips-how-you-doin-you-know-i-like-that-gif-15404129',
     'https://tenor.com/view/like-mmmhmm-i-like-that-shit-lip-bite-sassy-gif-16384921',
     'https://tenor.com/view/anime-smug-face-smug-anime-girl-smug-smug-face-smug-smile-gif-23765538',
@@ -194,7 +192,6 @@ redroom_responses = [
     'https://tenor.com/view/horny-anime-gif-19368853',
     'https://tenor.com/view/vrchat-shana-vrchat-shana-lick-licking-gif-14110643',
     'https://tenor.com/view/azur-lane-chibi-shouting-mad-angry-gif-15485754',
-    'https://c.tenor.com/HiboJY9qehoAAAAC/nut-button-press.gif',
     'https://tenor.com/view/cum-cum-mode-anime-cum-mode-anime-cum-cum-anime-gif-22504000',
     'https://tenor.com/view/cum-cum-mode-anime-cum-mode-anime-cum-cum-anime-gif-22504000',
     'https://c.tenor.com/3nAdVLDwDxkAAAAC/anime-swinging.gif',

@@ -211,7 +211,7 @@ async def on_message(message):
     # INTENTAR HACER UN PICK DE SIRI COINS
     if pick_message_object is not None:
         if channel.id not in not_allowed_channel_ids and channel.id == pick_message_object.channel.id and pending_pick==True and text.startswith('.pick'):
-            if  text.startswith(".pick") and (message_author.id == JOTA_ID or (randint(1, 100) > 85 )):
+            if  text.startswith(".pick") and (randint(1, 100) > 85 ):
                 random_index = randint(0, len(sassy_messages) - 1)
                 await message.reply(sassy_messages[random_index])
                 
