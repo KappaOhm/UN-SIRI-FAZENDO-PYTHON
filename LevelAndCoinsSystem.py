@@ -1,3 +1,4 @@
+import asyncio
 import json
 import uuid
 from io import BytesIO
@@ -8,12 +9,17 @@ import requests
 from BotTokens import TENOR_TOKEN
 from EmbedMessages import EmbedMessages
 from EnvironmentVariables import COINS_PER_LVL, LVLUP_MESSASGES, SAFADOS_ROLE_ID, SERVER_ID, SIRI_FAZENDO_PLATA_EMOJI, \
-    TITLES_PER_LVL
+    TITLES_PER_LVL, sassy_messages
 from PIL import Image, ImageDraw, ImageFont
 
+# INICIARLIZAR VARIABLES
+pending_pick = False
+coin_amount = 0
+image_rng_text = ''
+pick_message_object = None
 
 class LevelSystem:
-    
+
     # LEER ARCHIVO JSON
     async def read_users_data():
         with open('users.json', 'r') as f:
@@ -25,35 +31,68 @@ class LevelSystem:
         with open('users.json', 'w') as f:
             json.dump(users, f)
 
+    # PLANTAR MONEDAS
     async def plant_coins(channel,password):
-            global pick_message_object
-            global image_rng_text
-            global coin_amount
+        global pending_pick
+        global image_rng_text
+        global pick_message_object
+        global coin_amount
             
-            search_term = 'cangrejo'
-            response = requests.get("https://g.tenor.com/v1/search?q={}&key={}&limit=150".format(search_term, TENOR_TOKEN))
-            data = response.json()
-            random_index = randint(0, len(data['results']) - 1)
-            gif_png_url = data['results'][random_index]['media'][0]['gif']['preview']
-            image_size = data['results'][random_index]['media'][0]['gif']['dims']
+        search_term = 'cangrejo'
+        response = requests.get("https://g.tenor.com/v1/search?q={}&key={}&limit=150".format(search_term, TENOR_TOKEN))
+        data = response.json()
+        random_index = randint(0, len(data['results']) - 1)
+        gif_png_url = data['results'][random_index]['media'][0]['gif']['preview']
+        image_size = data['results'][random_index]['media'][0]['gif']['dims']
 
-            image_to_pick = Image.open(BytesIO(requests.get(gif_png_url).content))
+        image_to_pick = Image.open(BytesIO(requests.get(gif_png_url).content))
             
-            image_rng_text=str(uuid.uuid4())[9:13] if password is None else password
-            font_size = int(0.1*image_size[0]) if image_size[0] > image_size[1] else int(0.1*image_size[1])
-            text_font = ImageFont.truetype("impact.ttf", font_size)
-            drawOnImage = ImageDraw.Draw(image_to_pick)
-            drawOnImage.text(xy=(image_size[0]/2,5), text=image_rng_text, fill=(255,255,255), stroke_fill=(0,0,0), stroke_width=int(font_size/10),font=text_font)
-            image_to_pick.save("lastpick.png")
+        image_rng_text=str(uuid.uuid4())[9:13] if password is None else password
+        font_size = int(0.1*image_size[0]) if image_size[0] > image_size[1] else int(0.1*image_size[1])
+        text_font = ImageFont.truetype("impact.ttf", font_size)
+        drawOnImage = ImageDraw.Draw(image_to_pick)
+        drawOnImage.text(xy=(image_size[0]/2,5), text=image_rng_text, fill=(255,255,255), stroke_fill=(0,0,0), stroke_width=int(font_size/10),font=text_font)
+        image_to_pick.save("lastpick.png")
 
-            coin_amount = 1 if randint(1, 100) < 80 else 2
-            if coin_amount == 1:
-                message_text = "Ha aparecido "+ str(coin_amount) +' ' + SIRI_FAZENDO_PLATA_EMOJI + " siri coin, escribe .pick + código para atraparla"
-            else:
-                message_text ="Han aparecido "+ str(coin_amount) +' ' + SIRI_FAZENDO_PLATA_EMOJI + " siri coins, escribe .pick + código para atraparlas"
-            pick_message_object = await channel.send(message_text,file=discord.File('lastpick.png'))
-            return True,image_rng_text,pick_message_object,coin_amount
+        coin_amount = 1 if randint(1, 100) < 80 else 2
+        if coin_amount == 1:
+            message_text = "Ha aparecido "+ str(coin_amount) +' ' + SIRI_FAZENDO_PLATA_EMOJI + " siri coin, escribe .pick + código para atraparla"
+        else:
+            message_text ="Han aparecido "+ str(coin_amount) +' ' + SIRI_FAZENDO_PLATA_EMOJI + " siri coins, escribe .pick + código para atraparlas"
+        pick_message_object = await channel.send(message_text,file=discord.File('lastpick.png'))
 
+        pending_pick = True
+
+    # RECOGER MONEDAS
+    async def pick_coins(channel,original_message,text):
+        global pending_pick
+        global image_rng_text
+        global pick_message_object
+        global coin_amount
+        
+        if pick_message_object is not None and channel.id == pick_message_object.channel.id and pending_pick==True:
+            
+                message_author = original_message.author
+                
+                if  text.startswith(".pick") and (randint(1, 100) > 85 ):
+                    random_index = randint(0, len(sassy_messages) - 1)
+                    await original_message.reply(sassy_messages[random_index])
+                    
+                elif text == (".pick " + image_rng_text):
+                    pending_pick = False
+                    await pick_message_object.delete()
+                    
+                    users = await LevelSystem.read_users_data()
+                    user = message_author
+                    users[str(user.id)]['coins'] += coin_amount
+                    await LevelSystem.write_users_data(users)
+                    
+                    msg = await EmbedMessages.send_embed_msg(channel,None,message_author.mention + ' atrapó las siri coins' +SIRI_FAZENDO_PLATA_EMOJI)
+                    await asyncio.sleep(8)
+                    await original_message.delete()
+                    await msg.delete()
+           
+    # APOSTAR MONEDAS CON NUMERO PAR/IMPAR
     async def bet_par_impar(message, identifier):
         users = await LevelSystem.read_users_data()
         user = str(message.author.id)

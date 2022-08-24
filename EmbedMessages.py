@@ -40,9 +40,9 @@ class EmbedMessages:
         embedVar.add_field(
             name=".cmd", value="Muestra comandos relacionados a XP y monedas", inline=False)
         embedVar.add_field(
-            name=".setcum", value="Registra tu propio cumpleaños indicando el mes y día (MM-DD)", inline=False)
+            name=".setcum", value="Registra tu propio cumpleaños indicando el día y el mes (DD-MM)", inline=False)
         embedVar.add_field(
-            name=".deletecum", value="Si quieres borrar el registro de tu cumpleaños", inline=False)        
+            name=".deletecum", value="Borra el registro de tu cumpleaños", inline=False)        
         embedVar.add_field(
             name=".gif", value="Seguido de un termino de busqueda hace que siri busque y responda con un GIF relacionado", inline=False)
         embedVar.add_field(

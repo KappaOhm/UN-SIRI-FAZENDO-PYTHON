@@ -1,5 +1,3 @@
-
-import re
 from random import randint
 
 import discord
@@ -7,7 +5,7 @@ import requests
 from BotTokens import TENOR_TOKEN
 from EmbedMessages import EmbedMessages
 from EnvironmentVariables import ALT_RED_ROOM_TEXT_CHANNEL_ID, OWNER_ID, RED_ROOM_TEXT_CHANNEL_ID, context, contexto, \
-    redroom_responses, thirteen, trece, verga, vergas
+    redroom_responses
 
 
 class ReplyMessages:
@@ -15,7 +13,6 @@ class ReplyMessages:
     async def process_messages(channel,text,original_message):
 
         text_lowercase = text.lower()
-        channel = original_message.channel
         
         if text.startswith('.gif'):
             search_term = text[5:]
@@ -49,25 +46,7 @@ class ReplyMessages:
         # COMANDO DE COMANDOS XP Y MONEDAS
         if text == '.cmd':
             await EmbedMessages.cmd_embed_msg(original_message)
-
-        if text.startswith('.kickmsg'):
-            try:
-                user = original_message.mentions[0]
-                embedVar = discord.Embed(title='ATENCIÓN - ¡Has sido dad@ de alta!',
-                                        description='Se ha detectado completa inactividad de tu parte en nuestro servidor y nuestro deseo es que los miembros de la comunidad tengan interés por hacer parte de la misma.',
-                                        color=0xFFA500)
-                embedVar.set_thumbnail(
-                    url='https://cdn.discordapp.com/attachments/875044852314816522/930228514601451591/axoHey.png')
-                embedVar.set_image(
-                    url='https://cdn.discordapp.com/attachments/875044852314816522/930231541550968922/Screenshot_3.png')
-                embedVar.add_field(name='Eres bievenid@ de vuelta siempre que desees y puedes unirte siguiendo este enlace :',
-                                value='https://discord.gg/HaBQQKBQeB', inline=False)
-                await user.send(embed=embedVar)
-                await original_message.add_reaction('✅')
-            except:
-                await original_message.author.send(
-                    'ocurrió un errorsinho con el comando "' + text + '" - escribe bien esa mondá🦀🔪')
-                    
+             
         # RESPONDER A IMÁGENES EN RED ROOM
         if (channel.id == RED_ROOM_TEXT_CHANNEL_ID or channel.id == ALT_RED_ROOM_TEXT_CHANNEL_ID) and len(original_message.attachments) > 0:
                 random_number = randint(0, 99)
@@ -97,20 +76,6 @@ class ReplyMessages:
         if text_lowercase.endswith('complejo'):
             await channel.send('complejo como mi cangrejo 🥵')
 
-        if text_lowercase.endswith('trece') or text == '12 + 1' or text == '12+1':
-            await original_message.add_reaction('🥵')
-            random_index = randint(0, len(trece) - 1)
-            await channel.send(trece[random_index])
-
-        if text_lowercase.endswith('thirteen'):
-            await original_message.add_reaction('🥵')
-            random_index = randint(0, len(thirteen) - 1)
-            await channel.send(thirteen[random_index])
-
-        #TEST DE REGEX, POR FAVOR NO BORRAR
-        #if re.search('[0-3]', text) != None:
-        #    await channel.send('uwu')
-
         if text_lowercase == 'ocho' or text == '8' or text == '7+1' or text == '7 + 1':
             await channel.send('por el culo te la enclocho 🤠')
 
@@ -122,22 +87,22 @@ class ReplyMessages:
             await original_message.add_reaction('🅱️')
             await original_message.add_reaction('🇪')
             await original_message.add_reaction('🇷')
-            await channel.send('sáquelo :v')
-            
-        if text.startswith('.anuncio') and original_message.author.id == OWNER_ID:
-            await original_message.delete()
-            await EmbedMessages.send_embed_msg(channel,None,text[8:len(text)])
 
-        if text_lowercase.endswith('verga'):
-            await original_message.add_reaction('😈')
-            random_index = randint(0, len(verga) - 1)
-            await channel.send(verga[random_index])
-
-        if text_lowercase.endswith('vergas'):
-            await original_message.add_reaction('😈')
-            random_index = randint(0, len(vergas) - 1)
-            await channel.send(vergas[random_index])
-
-        if text_lowercase.endswith('dick') or text_lowercase.endswith('d1ck'):
-            await original_message.add_reaction('😈')
-            await channel.send('the one you eat ;)')
+        # ENVIAR UN MENSAJE ANTES DE KICKEAR A ALGUIEN DEL SERVER
+        if text.startswith('.kickmsg'):
+            try:
+                user = original_message.mentions[0]
+                embedVar = discord.Embed(title='ATENCIÓN - ¡Has sido dad@ de alta!',
+                                        description='Se ha detectado completa inactividad de tu parte en nuestro servidor y nuestro deseo es que los miembros de la comunidad tengan interés por hacer parte de la misma.',
+                                        color=0xFFA500)
+                embedVar.set_thumbnail(
+                    url='https://cdn.discordapp.com/attachments/875044852314816522/930228514601451591/axoHey.png')
+                embedVar.set_image(
+                    url='https://cdn.discordapp.com/attachments/875044852314816522/930231541550968922/Screenshot_3.png')
+                embedVar.add_field(name='Eres bievenid@ de vuelta siempre que desees y puedes unirte siguiendo este enlace :',
+                                value='https://discord.gg/HaBQQKBQeB', inline=False)
+                await user.send(embed=embedVar)
+                await original_message.add_reaction('✅')
+            except:
+                await original_message.author.send(
+                    'ocurrió un errorsinho con el comando "' + text + '" - escribe bien esa mondá🦀🔪')    
