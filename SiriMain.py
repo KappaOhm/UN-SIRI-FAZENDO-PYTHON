@@ -2,7 +2,7 @@
 import asyncio
 import calendar
 from datetime import date, datetime
-from random import randint, shuffle
+from random import randint
 
 import discord
 from AdminCommands import *
@@ -33,7 +33,6 @@ async def called_once_a_day():
     random_index2 = randint(0, len(bomdia_gifs) - 1)
     await EmbedMessages.send_embed_msg(channel,None,bomdia_messages[random_index1])
     await channel.send(bomdia_gifs[random_index2])
-    #await ReplyMessages.process_messages(channel,".gif bom dia",None)
 
     #REVISAR CUMPLEAÑOS
     users = await LevelSystem.read_users_data()
@@ -52,7 +51,7 @@ async def called_once_a_day():
 async def before():
     now = datetime.now()
     current_time = now.strftime("%H:%M:%S")
-    print("Current Time =", current_time)
+    print("Hora actual =", current_time)
     if current_time < '12:00:00' and current_time > '00:00:00':
         hours_left = 12-int(current_time[0:2])
     elif current_time > '12:00:00' and current_time < '24:00:00':
@@ -79,75 +78,8 @@ async def on_message(original_message):
     await ReplyMessages.process_messages(channel,text,original_message)
     await AdminCommands.process_commands(channel,text,original_message)
     await MusicHandler.process_commands(channel,text,original_message,client)
-
-    # SISTEMA DE XP POR MENSAJES
-    # SOLO MENSAJES DE MÁS DE 10 CARACTERES CUENTAN PARA XP
-    if channel.id != DUNGEON_TEXT_CHANNEL_ID and (len(text) > 10 or len(original_message.attachments) > 0):
-
-        users = await LevelSystem.read_users_data()
-
-        # MENSAJES CON INSERCIONES DE IMAGENES DAN EL TRIPLE DE XP
-        xp_points = 15 if (len(original_message.attachments) > 0 and channel.id !=SHITPOST_TEXT_CHANNEL_ID) else 5
-
-        # PLANTAR MONEDAS CON CIERTA PROPABILIDAD CADA VEZ QUE SE ENVIA UN MENSAJE
-        if channel.id not in not_allowed_channel_ids and pending_pick==False:
-            if (randint(1, 100) + chance) > 100:
-                await LevelSystem.plant_coins(channel,None)
-            
-        await LevelSystem.update_data(users, str(message_author.id))
-        await LevelSystem.add_experience(users, str(message_author.id), xp_points)
-        await LevelSystem.level_up(users, message_author, channel,client)
-
-        await LevelSystem.write_users_data(users)
-
-    # RECOGER MONEDAS
-    if text.startswith('.pick') and channel.id not in not_allowed_channel_ids:
-        await LevelSystem.pick_coins(channel,original_message,text)  
-      
-    # COMANDO PARA REVISAR EXPERIENCIA PROPIA O DE OTRO USUARIO
-    if text.startswith('.xp'):
-        if text == '.xp':
-            await LevelSystem.check_xp(None, message_author, channel)
-        else:
-            await LevelSystem.check_xp(original_message, None, None)
-
-    # COMANDO LEADERBOARD
-    if text == '.lb':
-        await LevelSystem.get_xp_leaderboard(channel,client)
-
-    # COMANDO APOSTAR POR PAR
-    if text.startswith('.par') and channel.id == SIRI_CHAT_TEXT_CHANNEL_ID:
-        await LevelSystem.bet_par_impar(original_message, 0)
-
-    # COMANDO APOSTAR POR IMPAR
-    if text.startswith('.impar') and channel.id == SIRI_CHAT_TEXT_CHANNEL_ID:
-        await LevelSystem.bet_par_impar(original_message, 1)
-          
-    # SETEAR UN CUMPLEAÑOS
-    if text.startswith('.setcum'):
-        try:
-            users = await LevelSystem.read_users_data()
-            bd_date = text[len('.setcum '):]
-            month_number = int(bd_date[len('DD-'):])
-            month_name = calendar.month_name[month_number]
-            mont_day = bd_date[:len('DD')]
-            datetime(2000,month_number,int(mont_day))
-            user = original_message.mentions[0] if original_message.mentions else message_author
-            users[str(user.id)]['bd'] = month_name + " " + mont_day
-            await original_message.add_reaction('🎂')
-            await original_message.add_reaction('✨')
-            await LevelSystem.write_users_data(users)
-            await LevelSystem.check_xp(None, user, channel)
-        except :
-            await EmbedMessages.send_embed_msg(channel, None, "Ocurrió un error, quizas NO usaste una fecha válida o el formato adecuado u.u")
-
-    # ELIMINAR UN CUMPLEAÑOS
-    if text.startswith('.deletecum'):
-        users = await LevelSystem.read_users_data()
-        user = original_message.mentions[0] if original_message.mentions else message_author
-        del users[str(user.id)]['bd']
-        await original_message.add_reaction('☑️')
-        await LevelSystem.write_users_data(users)
+    await LevelSystem.process_commands(channel,text,original_message,client)
+    
 
 # CONECTAR BOT AL VOICE Y LIMPIAR VARIABLES CUANDO SE DESCONECTA DE CUALQUIER CANAL DE VOZ
 @client.event

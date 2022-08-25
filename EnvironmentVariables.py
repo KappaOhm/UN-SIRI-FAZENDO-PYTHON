@@ -23,7 +23,7 @@ SURVIVAL_ROLE_ID    = 840714709535162378
 FPS_ROLE_ID         = 875118283521671228
 
 SIRI_FAZENDO_PLATA_EMOJI = "<:SiriFazendoPlata:883917010260615188>"
-SIRI_IMAGE = SIRI_IMAGE = "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/95fa93bc-bb27-45ae-ab2f-680ea92bd79e/deqbwof-3e625c35-29d3-48bf-9180-9d810de75b35.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzk1ZmE5M2JjLWJiMjctNDVhZS1hYjJmLTY4MGVhOTJiZDc5ZVwvZGVxYndvZi0zZTYyNWMzNS0yOWQzLTQ4YmYtOTE4MC05ZDgxMGRlNzViMzUucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.jBtTOS2i26MbSWyEot-40E6ZjLXeWH9snECMaWVEj2w"
+SIRI_IMAGE = "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/95fa93bc-bb27-45ae-ab2f-680ea92bd79e/deqbwof-3e625c35-29d3-48bf-9180-9d810de75b35.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzk1ZmE5M2JjLWJiMjctNDVhZS1hYjJmLTY4MGVhOTJiZDc5ZVwvZGVxYndvZi0zZTYyNWMzNS0yOWQzLTQ4YmYtOTE4MC05ZDgxMGRlNzViMzUucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.jBtTOS2i26MbSWyEot-40E6ZjLXeWH9snECMaWVEj2w"
 SECONDS_TO_DISCONNECT = 600
 
                     #1,2,3,4,5,6, 7, 8, 9, 10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28, 29, 30
@@ -40,20 +40,20 @@ FFMPEG_OPTIONS = {
     'options': '-vn'
     }
 
-not_allowed_channel_ids =[
+not_allowed_channel_ids = [
     DUNGEON_TEXT_CHANNEL_ID
     ]
     
 TITLES_PER_LVL = [
-    "Noob","Noob","Noob","Mera tía","Aprendiz","Amateur", #1-5
+    "Noob","Noob","Noob","Mera tía","Aprendiz","Amateur",               #1-5
     "Kinkster","Safado Ajolotote","Safado Ajolotote","Cremosin","Diva", #6-10
-    "Diva","Bichota","Bichota","Bichota","Arrechx", #11-15
-    "Arrechx","Arrechx","xxx","xxx","xxx", #16-20
-    "Master","Master","Leyenda","Leyenda","ski lo mama", #21-25
-    "Admin","Admin","Super Admin","Mega Admin","Giga Admin" #26-30
+    "Diva","Bichota","Bichota","Bichota","Arrechx",                     #11-15
+    "Arrechx","Arrechx","xxx","xxx","xxx",                              #16-20
+    "Master","Master","Leyenda","Leyenda","ski lo mama",                #21-25
+    "Admin","Admin","Super Admin","Mega Admin","Giga Admin"             #26-30
     ]
 
-LVLUP_MESSASGES =[
+LVLUP_MESSASGES = [
     '¡Felicidades!🥳🎉`',
     '¡Tudo um conchesumadre!🐒`',
     '¡Eso bichota!💅`',
@@ -75,7 +75,7 @@ welcome_gifs = [
     'https://tenor.com/view/red-head-girl-anime-welcome-emi-yusa-gif-15338285'
     ]
     
-cum_messsages =[ 
+cum_messsages = [ 
     'Bolos de mamão para você 🍰 ¡Feliz cum! ',
     'Entre más vieja la pasa más sabrosa es la fruta 🥵 ¡Feliz cumpleaños! ',
     'Parabéns querido amigo. Você nunca será tão jovem novamente, então aproveite 🎉 ',
@@ -83,7 +83,7 @@ cum_messsages =[
     'Estas son las mañanitas que cantaba el rey João👑, a las bichotas gostosas se las cantamos así: ¡Feliz cum!🎊'
     ]
 
-cum_images=[
+cum_images = [
     'https://media1.tenor.com/images/695be54002b18bcc4fb10396945d9730/tenor.gif?itemid=26302039',
     'https://c.tenor.com/8b7jfGD9lb8AAAAC/happy-birthday-birthday-cake.gif',
     'https://c.tenor.com/1M47Ae-a_2UAAAAC/bob-esponja-las-mananitas.gif',
@@ -97,7 +97,7 @@ cum_images=[
     'https://i.pinimg.com/564x/3d/9f/05/3d9f059e6dd638dc192febbca9b536a6.jpg'
     ]
 
-bomdia_messages =[
+bomdia_messages = [
     '¡Hola Bom Día!⭐',
     'Eu gostaria que você pudesse desfrutar de um dia inesquecível. Com esta mensagem, eu não só lhe desejo um bom dia, mas também desejo que possamos nos ver o mais rapidamente possível, para que os segundos parem de parecer horas🐒',
     '🦄Problemas, trabalho, dificuldades, decepção … tudo ao seu lado parece uma miniatura, já que só penso em poder estar em seus braços para poder desfrutar do nosso amor juntos. Por esta razão, quero desejar-lhe a minha vida desde o primeiro minuto🦄',
@@ -135,7 +135,7 @@ bomdia_messages =[
     '🔮Desejo a você um dia maravilhoso cheio de momentos felizes🔮'   
     ]
 
-bomdia_gifs =[
+bomdia_gifs = [
     'https://media.tenor.com/images/0c9d88ea6c328802517f38501aa77d64/tenor.gif',
     'https://tenor.com/view/cute-anime-wave-hi-hello-gif-8807701',
     'https://tenor.com/view/highschool-dxd-hs-dxd-akeno-boobs-ecchi-gif-20749661',
@@ -222,4 +222,4 @@ contexto = [
     'Te la comés, la masticás, la tragás sin pretexto. Así no estés dispuesto, pero tal vez alguna vez te lo has propuesto, y te seré honesto, te haré el favor y te lo presto, tan fuerte que tal vez me den arresto. Ya no aguantás ni el sexto, así que lo dejamos pospuesto, pero te falta afecto y te lo dejo otra vez puesto, te aplasto en la pared como insecto tan duro que sale polvo de asbesto, llamo al arquitecto Alberto y al modesto Ernesto, y terminás más abierto que portón de asentamiento, ya no tenés más almacenamiento así que necesitás asesoramiento y a tu madre llamamos para darle su afecto así hasta el agotamiento y al siguiente día repetimos y hasta con repuesto, y te la meto sin pretexto, así no estés dispuesto, pero tal vez alguna vez te lo has propuesto, y te seré honesto te haré el favor y te lo presto, tan fuerte que tal vez me den arresto, ya no aguantás ni el sexto, así que lo dejamos pospuesto, pero te falta afecto y te lo dejo otra vez puesto, te aplasto en la pared como insecto tan duro que sale polvo de asbesto, llamo al arquitecto Alberto y al modesto Ernesto, y terminás más abierto que portón de asentamiento, ya no tenés más almacenamiento así que necesitás asesoramiento y a tu madre llamamos para darle su afecto así hasta el agotamiento y al siguiente día repetimos pero ya estás descompuesto así que para mí continuar sería incorrecto y me voy sin mostrar algún gesto, dispuesto a seguir apenas y ya estés compuesto voy y te doy el impuesto pero no sin antes avisarte que este es el contexto'
     ]
             
-context = ["you'll eat it with no context", "You eat it, you chew it, you swallow it without pretext. Even if you're not willing, but maybe you've ever thought about it, and I'll be honest, I'll do you a favor and lend it to you, so hard I might get arrested. You can't stand the sixth anymore, so we'll leave it postponed, but you lack affection and I'll leave it on again, I crush you on the wall like an insect so hard that asbestos dust comes out, I call the architect Alberto and the modest Ernesto, and you end up more open than a settlement gate, you no longer have storage so you need advice and we call your mother to give her affection like this until exhaustion and the next day we repeat and even with a spare, and I put it in you without pretext, even if you are not willing , but maybe you've ever proposed it, and I'll be honest I'll do you a favor and lend it to you, so strong that maybe they'll arrest me, you can't stand even the sixth anymore, so we postponed it, but you lack affection and I leave it on again, I crush you on the wall like an insect so hard that asbestos dust comes out, I call the architect Alberto and the modest Ernesto, and you end up more open than a settlement gate, you no longer have storage so you need advice and to you We called our mother to give her affection like this until we were exhausted and the next day we repeated but you are already upset so for me to continue would be wrong and I leave without showing any gesture, willing to continue as soon as you are composed I go and give you the tax but not without first warning you that this is the context"]
+context = ["You eat it, you chew it, you swallow it without pretext. Even if you're not willing, but maybe you've ever thought about it, and I'll be honest, I'll do you a favor and lend it to you, so hard I might get arrested. You can't stand the sixth anymore, so we'll leave it postponed, but you lack affection and I'll leave it on again, I crush you on the wall like an insect so hard that asbestos dust comes out, I call the architect Alberto and the modest Ernesto, and you end up more open than a settlement gate, you no longer have storage so you need advice and we call your mother to give her affection like this until exhaustion and the next day we repeat and even with a spare, and I put it in you without pretext, even if you are not willing , but maybe you've ever proposed it, and I'll be honest I'll do you a favor and lend it to you, so strong that maybe they'll arrest me, you can't stand even the sixth anymore, so we postponed it, but you lack affection and I leave it on again, I crush you on the wall like an insect so hard that asbestos dust comes out, I call the architect Alberto and the modest Ernesto, and you end up more open than a settlement gate, you no longer have storage so you need advice and to you We called our mother to give her affection like this until we were exhausted and the next day we repeated but you are already upset so for me to continue would be wrong and I leave without showing any gesture, willing to continue as soon as you are composed I go and give you the tax but not without first warning you that this is the context"]

@@ -1,6 +1,8 @@
 import asyncio
+import calendar
 import json
 import uuid
+from datetime import datetime
 from io import BytesIO
 from random import randint
 
@@ -8,8 +10,9 @@ import discord
 import requests
 from BotTokens import TENOR_TOKEN
 from EmbedMessages import EmbedMessages
-from EnvironmentVariables import COINS_PER_LVL, LVLUP_MESSASGES, SAFADOS_ROLE_ID, SERVER_ID, SIRI_FAZENDO_PLATA_EMOJI, \
-    TITLES_PER_LVL, sassy_messages
+from EnvironmentVariables import COINS_PER_LVL, DUNGEON_TEXT_CHANNEL_ID, LVLUP_MESSASGES, SAFADOS_ROLE_ID, SERVER_ID, \
+    SHITPOST_TEXT_CHANNEL_ID, SIRI_CHAT_TEXT_CHANNEL_ID, SIRI_FAZENDO_PLATA_EMOJI, TITLES_PER_LVL, \
+    not_allowed_channel_ids, sassy_messages
 from PIL import Image, ImageDraw, ImageFont
 
 # INICIARLIZAR VARIABLES
@@ -20,7 +23,80 @@ pick_message_object = None
 
 class LevelSystem:
 
-    # LEER ARCHIVO JSON
+    # ATRIBUTOS DE CLASE
+    chance = 0
+ 
+    async def process_commands(channel,text,original_message,client):
+        message_author = original_message.author
+
+        # SISTEMA DE XP POR MENSAJES
+        # SOLO MENSAJES DE MÁS DE 10 CARACTERES CUENTAN PARA XP
+        if channel.id != DUNGEON_TEXT_CHANNEL_ID and (len(text) > 10 or len(original_message.attachments) > 0):
+
+            users = await LevelSystem.read_users_data()
+
+            # MENSAJES CON INSERCIONES DE IMAGENES DAN EL TRIPLE DE XP
+            xp_points = 15 if (len(original_message.attachments) > 0 and channel.id !=SHITPOST_TEXT_CHANNEL_ID) else 5
+
+            # PLANTAR MONEDAS CON CIERTA PROPABILIDAD CADA VEZ QUE SE ENVIA UN MENSAJE
+            await LevelSystem.plant_coins(channel,None,False)
+                
+            await LevelSystem.update_data(users, str(message_author.id))
+            await LevelSystem.add_experience(users, str(message_author.id), xp_points)
+            await LevelSystem.level_up(users, message_author, channel,client)
+
+            await LevelSystem.write_users_data(users)
+
+        # RECOGER MONEDAS
+        if text.startswith('.pick') and channel.id not in not_allowed_channel_ids:
+            await LevelSystem.pick_coins(channel,original_message,text)
+            
+        # COMANDO PARA REVISAR EXPERIENCIA PROPIA O DE OTRO USUARIO
+        if text.startswith('.xp'):
+            if text == '.xp':
+                await LevelSystem.check_xp(None, message_author, channel)
+            else:
+                await LevelSystem.check_xp(original_message, None, None)
+
+        # COMANDO LEADERBOARD
+        if text == '.lb':
+            await LevelSystem.get_xp_leaderboard(channel,client)
+
+        # COMANDO APOSTAR POR PAR
+        if text.startswith('.par') and channel.id == SIRI_CHAT_TEXT_CHANNEL_ID:
+            await LevelSystem.bet_par_impar(original_message, 0)
+
+        # COMANDO APOSTAR POR IMPAR
+        if text.startswith('.impar') and channel.id == SIRI_CHAT_TEXT_CHANNEL_ID:
+            await LevelSystem.bet_par_impar(original_message, 1)
+            
+        # SETEAR UN CUMPLEAÑOS
+        if text.startswith('.setcum'):
+            try:
+                users = await LevelSystem.read_users_data()
+                bd_date = text[len('.setcum '):]
+                month_number = int(bd_date[len('DD-'):])
+                month_name = calendar.month_name[month_number]
+                mont_day = bd_date[:len('DD')]
+                datetime(2000,month_number,int(mont_day))
+                user = original_message.mentions[0] if original_message.mentions else message_author
+                users[str(user.id)]['bd'] = month_name + " " + mont_day
+                await original_message.add_reaction('🎂')
+                await original_message.add_reaction('✨')
+                await LevelSystem.write_users_data(users)
+                await LevelSystem.check_xp(None, user, channel)
+            except :
+                await EmbedMessages.send_embed_msg(channel, None, "Ocurrió un error, quizas NO usaste una fecha válida o el formato adecuado u.u")
+
+        # ELIMINAR UN CUMPLEAÑOS
+        if text.startswith('.deletecum'):
+            users = await LevelSystem.read_users_data()
+            user = original_message.mentions[0] if original_message.mentions else message_author
+            del users[str(user.id)]['bd']
+            await original_message.add_reaction('☑️')
+            await LevelSystem.write_users_data(users)
+
+        # LEER ARCHIVO JSON
     async def read_users_data():
         with open('users.json', 'r') as f:
             users = json.load(f)
@@ -32,36 +108,38 @@ class LevelSystem:
             json.dump(users, f)
 
     # PLANTAR MONEDAS
-    async def plant_coins(channel,password):
+    async def plant_coins(channel,password,is_plant):
         global pending_pick
         global image_rng_text
         global pick_message_object
         global coin_amount
-            
-        search_term = 'cangrejo'
-        response = requests.get("https://g.tenor.com/v1/search?q={}&key={}&limit=150".format(search_term, TENOR_TOKEN))
-        data = response.json()
-        random_index = randint(0, len(data['results']) - 1)
-        gif_png_url = data['results'][random_index]['media'][0]['gif']['preview']
-        image_size = data['results'][random_index]['media'][0]['gif']['dims']
+        
+        if is_plant or (channel.id not in not_allowed_channel_ids and pending_pick==False and ((randint(1, 100) + LevelSystem.chance) > 100)):
 
-        image_to_pick = Image.open(BytesIO(requests.get(gif_png_url).content))
-            
-        image_rng_text=str(uuid.uuid4())[9:13] if password is None else password
-        font_size = int(0.1*image_size[0]) if image_size[0] > image_size[1] else int(0.1*image_size[1])
-        text_font = ImageFont.truetype("impact.ttf", font_size)
-        drawOnImage = ImageDraw.Draw(image_to_pick)
-        drawOnImage.text(xy=(image_size[0]/2,5), text=image_rng_text, fill=(255,255,255), stroke_fill=(0,0,0), stroke_width=int(font_size/10),font=text_font)
-        image_to_pick.save("lastpick.png")
+            search_term = 'cangrejo'
+            response = requests.get("https://g.tenor.com/v1/search?q={}&key={}&limit=150".format(search_term, TENOR_TOKEN))
+            data = response.json()
+            random_index = randint(0, len(data['results']) - 1)
+            gif_png_url = data['results'][random_index]['media'][0]['gif']['preview']
+            image_size = data['results'][random_index]['media'][0]['gif']['dims']
 
-        coin_amount = 1 if randint(1, 100) < 80 else 2
-        if coin_amount == 1:
-            message_text = "Ha aparecido "+ str(coin_amount) +' ' + SIRI_FAZENDO_PLATA_EMOJI + " siri coin, escribe .pick + código para atraparla"
-        else:
-            message_text ="Han aparecido "+ str(coin_amount) +' ' + SIRI_FAZENDO_PLATA_EMOJI + " siri coins, escribe .pick + código para atraparlas"
-        pick_message_object = await channel.send(message_text,file=discord.File('lastpick.png'))
+            image_to_pick = Image.open(BytesIO(requests.get(gif_png_url).content))
+                
+            image_rng_text=str(uuid.uuid4())[9:13] if password is None else password
+            font_size = int(0.1*image_size[0]) if image_size[0] > image_size[1] else int(0.1*image_size[1])
+            text_font = ImageFont.truetype("impact.ttf", font_size)
+            drawOnImage = ImageDraw.Draw(image_to_pick)
+            drawOnImage.text(xy=(image_size[0]/2,5), text=image_rng_text, fill=(255,255,255), stroke_fill=(0,0,0), stroke_width=int(font_size/10),font=text_font)
+            image_to_pick.save("lastpick.png")
 
-        pending_pick = True
+            coin_amount = 1 if randint(1, 100) < 80 else 2
+            if coin_amount == 1:
+                message_text = "Ha aparecido "+ str(coin_amount) +' ' + SIRI_FAZENDO_PLATA_EMOJI + " siri coin, escribe .pick + código para atraparla"
+            else:
+                message_text ="Han aparecido "+ str(coin_amount) +' ' + SIRI_FAZENDO_PLATA_EMOJI + " siri coins, escribe .pick + código para atraparlas"
+            pick_message_object = await channel.send(message_text,file=discord.File('lastpick.png'))
+
+            pending_pick = True
 
     # RECOGER MONEDAS
     async def pick_coins(channel,original_message,text):
@@ -91,7 +169,7 @@ class LevelSystem:
                     await asyncio.sleep(8)
                     await original_message.delete()
                     await msg.delete()
-           
+                    
     # APOSTAR MONEDAS CON NUMERO PAR/IMPAR
     async def bet_par_impar(message, identifier):
         users = await LevelSystem.read_users_data()
@@ -174,7 +252,7 @@ class LevelSystem:
             user_xp = users[str(user.id)]['experience']
             user_lvl = users[str(user.id)]['level']
             next_lvl_xp = 47.2298*(2*(user_lvl+1)- 3)**(20/11)
-            current_lvl_base_xp = 47.2298*(2*(user_lvl)- 3)**(20/11)
+            current_lvl_base_xp = 47.2298*(2*(user_lvl)- 3)**(20/11) if user_lvl>1 else 0
 
             title_in_level = TITLES_PER_LVL[user_lvl]
 

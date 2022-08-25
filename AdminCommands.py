@@ -2,8 +2,6 @@ from EmbedMessages import EmbedMessages
 from EnvironmentVariables import OWNER_ID, SIRI_FAZENDO_PLATA_EMOJI, not_allowed_channel_ids
 from LevelAndCoinsSystem import LevelSystem, pending_pick
 
-# INICIARLIZAR VARIABLES
-chance = 5
 
 class AdminCommands:
 
@@ -12,8 +10,7 @@ class AdminCommands:
         if original_message.author.id == OWNER_ID:
 
             global pending_pick
-            
-                
+
             # ESTE METODO SE USA PARA HACER QUE EL BOT ENVIE CUALQUER MENSAJE QUE DESEEMOS
             if text.startswith('.anuncio'):           
                 await EmbedMessages.send_embed_msg(channel,None,text[len('.anuncio' ):len(text)])
@@ -21,8 +18,7 @@ class AdminCommands:
 
             # CAMBIAR LA PROBABILIDAD DE QUE SIRI PLANTE COINS
             if text.startswith('.setchance'):
-                global chance
-                chance = int(text[len('.setchance '):])
+                LevelSystem.chance = int(text[len('.setchance '):])
                 await original_message.add_reaction('✨')  
 
             # DAR MONEDAS
@@ -39,4 +35,4 @@ class AdminCommands:
             if text.startswith('.plant') and channel.id not in not_allowed_channel_ids and pending_pick==False:
                 password = text[len('.plant '):]
                 await original_message.delete()
-                await LevelSystem.plant_coins(channel,password)
+                await LevelSystem.plant_coins(channel,password,True)
