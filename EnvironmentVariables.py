@@ -26,13 +26,6 @@ SIRI_FAZENDO_PLATA_EMOJI = "<:SiriFazendoPlata:883917010260615188>"
 SIRI_IMAGE = SIRI_IMAGE = "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/95fa93bc-bb27-45ae-ab2f-680ea92bd79e/deqbwof-3e625c35-29d3-48bf-9180-9d810de75b35.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzk1ZmE5M2JjLWJiMjctNDVhZS1hYjJmLTY4MGVhOTJiZDc5ZVwvZGVxYndvZi0zZTYyNWMzNS0yOWQzLTQ4YmYtOTE4MC05ZDgxMGRlNzViMzUucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.jBtTOS2i26MbSWyEot-40E6ZjLXeWH9snECMaWVEj2w"
 SECONDS_TO_DISCONNECT = 600
 
-voice_client_playing = None
-adding_song = False
-is_playlist = False
-songs_titles = []
-URL_queue = []
-song_playing = ""
-
                     #1,2,3,4,5,6, 7, 8, 9, 10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28, 29, 30
 COINS_PER_LVL = [0,0,5,5,5,5,10,15,20,25,30,20,20,20,20,25,30,30,30,30,35,40,40,40,40,40,40,50,100,125,200]
 

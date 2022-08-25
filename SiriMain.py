@@ -64,11 +64,8 @@ async def before():
 # FUNCIONES CON MENSAJES DE TEXTO EN CANALES
 @client.event
 async def on_message(original_message):
-    global voice_client_playing
-    global adding_song
-    global songs_titles
-    global URL_queue
-    global is_playlist
+    global chance
+    global pending_pick
 
     text = original_message.content
     channel = original_message.channel
@@ -81,7 +78,8 @@ async def on_message(original_message):
     # ELSE, EL MENSAJE NO VIENE DE NINGUN BOT
     await ReplyMessages.process_messages(channel,text,original_message)
     await AdminCommands.process_commands(channel,text,original_message)
-    
+    await MusicHandler.process_commands(channel,text,original_message,client)
+
     # SISTEMA DE XP POR MENSAJES
     # SOLO MENSAJES DE MÁS DE 10 CARACTERES CUENTAN PARA XP
     if channel.id != DUNGEON_TEXT_CHANNEL_ID and (len(text) > 10 or len(original_message.attachments) > 0):
@@ -149,122 +147,7 @@ async def on_message(original_message):
         user = original_message.mentions[0] if original_message.mentions else message_author
         del users[str(user.id)]['bd']
         await original_message.add_reaction('☑️')
-        await LevelSystem.write_users_data(users)      
-        
-    # COMANDO PLAY
-    if text.startswith('.play') or (text.startswith('.p') and ".par" not in text and ".plant" not in text and ".pick" not in text) and (channel.id == SIRI_CHAT_TEXT_CHANNEL_ID):
-
-        if message_author.voice is None:
-            await EmbedMessages.send_embed_msg(channel, None, "No estas en un canal de voz 🦀")
-        else:
-            if voice_client_playing is not None and voice_client_playing.is_playing() and voice_client_playing.channel.id != message_author.voice.channel.id:
-                await EmbedMessages.send_embed_msg(channel, None, "Ya estoy ocupado en otro canal de voz🦀")
-            else:
-                if text.startswith('.play'):
-                    url_song = text.replace('.play ', '')
-                elif text.startswith('.p'):
-                    url_song = text.replace('.p ', '')
-                try:
-                    is_playlist = False
-                    if 'list' in url_song:
-                        await EmbedMessages.send_embed_msg(channel, None, "🎶 Descargando playlist...")
-                    URL = MusicHandler.get_YT_info(url_song)
-
-                    if is_playlist and voice_client_playing is None and len(URL_queue) > 0:
-                        voice_client_playing = await message_author.voice.channel.connect()
-                        adding_song = True
-                        await MusicHandler.play_song(channel, URL_queue.pop(0),client)
-
-                    else:
-                        if voice_client_playing is None and adding_song == False:
-                            voice_client_playing = await message_author.voice.channel.connect()
-                            adding_song = True
-                            MusicHandler.add_to_queue(adding_song, URL)
-                        else:
-                            MusicHandler.add_to_queue(adding_song, URL)
-                            if len(URL_queue) > 0:
-                                await original_message.add_reaction('🌟')
-                                if is_playlist:
-                                    await EmbedMessages.send_embed_msg(channel, None, "Playlist agregada 🎶")
-                                else:
-                                    await EmbedMessages.send_embed_msg(channel, "Cancion agregada 🦀", songs_titles[-1])
-
-                        if len(URL_queue) > 0 and voice_client_playing.is_playing() == False:
-                            await MusicHandler.play_song(channel, URL_queue.pop(0),client)
-                except Exception as error:
-
-                    if error.__context__ is not None and error.__context__.args is not None:
-                        mensaje = error.__context__.args[0]
-                    else:
-                        mensaje = "Lo siento, ocurrió un error y es culpa de YouTube u.u"
-                    print(error)
-                    await EmbedMessages.send_embed_msg(channel, "Error", mensaje)
-
-    # COMANDO NEXT
-    if text == '.next' or text == '.n' and (channel.id == SIRI_CHAT_TEXT_CHANNEL_ID):
-        if voice_client_playing is not None and len(URL_queue) > 0:
-            voice_client_playing.pause()
-            await EmbedMessages.send_embed_msg(channel, "Siguiente canción 🦀", None)
-            MusicHandler.check_queue(channel)
-        else:
-            adding_song = False
-            await EmbedMessages.send_embed_msg(channel, None, "Aqui no hay nada mi ciela 🦀")
-
-     # COMANDO SHUFFLE
-    if text == '.shuffle' or text == '.s' and (channel.id == SIRI_CHAT_TEXT_CHANNEL_ID):
-        if voice_client_playing is not None and len(URL_queue) > 0:
-            await EmbedMessages.send_embed_msg(channel, None, " 🧙🌟 ==> 🎲🎵")
-
-            songs_titles_shuffled = []
-            URL_queue_shuffled = []
-            index_shuf = list(range(len(songs_titles)))
-            shuffle(index_shuf)
-            for i in index_shuf:
-                songs_titles_shuffled.append(songs_titles[i])
-                URL_queue_shuffled.append(URL_queue[i])
-
-            songs_titles = songs_titles_shuffled
-            URL_queue = URL_queue_shuffled
-            await MusicHandler.show_queue(channel)
-
-        else:
-            adding_song = False
-            await EmbedMessages.send_embed_msg(channel, None, "Aqui no hay nada mi ciela 🦀")        
-
-    # COMANDO STOP
-    if text == '.stop' and (channel.id == SIRI_CHAT_TEXT_CHANNEL_ID):
-        if voice_client_playing is not None and voice_client_playing.is_playing() == True:
-            voice_client_playing.stop()
-            URL_queue = []
-            songs_titles = []
-            await EmbedMessages.send_embed_msg(channel, None, "Reproduccion de música detenida 🦀")
-
-    # COMANDO CLEAR
-    if text == '.clear' and channel.id == SIRI_CHAT_TEXT_CHANNEL_ID:
-        if URL_queue:
-            URL_queue = []
-            songs_titles = []
-            await EmbedMessages.send_embed_msg(channel, None, "Cola de reproduccion borrada🎵🤠")
-        else:
-            await EmbedMessages.send_embed_msg(channel, None, "Aqui no hay nada mi ciela 🦀")
-
-    # COMANDO QUEUE
-    if text == '.q' and (channel.id == SIRI_CHAT_TEXT_CHANNEL_ID):
-        await MusicHandler.show_queue(channel)
-
-    # COMANDO LEAVE
-    if text == '.leave' and (channel.id == SIRI_CHAT_TEXT_CHANNEL_ID):
-        is_disconnected = False
-        if voice_client_playing is not None:
-            songs_titles = []
-            URL_queue = []
-            voice_client_playing.stop()
-            await voice_client_playing.disconnect()
-            voice_client_playing = None
-            adding_song = False
-            is_disconnected = True
-        if is_disconnected:
-            await EmbedMessages.send_embed_msg(channel, None,"Ah pero ya me echaron, todo bien🦀🔪")
+        await LevelSystem.write_users_data(users)
 
 # CONECTAR BOT AL VOICE Y LIMPIAR VARIABLES CUANDO SE DESCONECTA DE CUALQUIER CANAL DE VOZ
 @client.event
