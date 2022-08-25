@@ -39,7 +39,7 @@ class MusicHandler:
 
         if len(URL_queue) > 0:
             asyncio.run_coroutine_threadsafe(
-                MusicHandler.play_song(channel, URL_queue.pop(0)), client.loop)
+                MusicHandler.play_song(channel, URL_queue.pop(0),client), client.loop)
         else:
             asyncio.run_coroutine_threadsafe(
                 MusicHandler.auto_disconnect(channel), client.loop)
@@ -118,7 +118,7 @@ class MusicHandler:
             voice_client_playing.pause()
             await EmbedMessages.send_embed_msg(channel, "Siguiente canción 🦀", None)
             await message.clear_reactions()
-            MusicHandler.check_queue(channel)
+            MusicHandler.check_queue(channel,client)
 
         elif payload.emoji.name == '⏸️' and not payload.member.bot and voice_client_playing.is_playing():
             await message.clear_reactions()
@@ -200,7 +200,7 @@ class MusicHandler:
             if voice_client_playing is not None and len(URL_queue) > 0:
                 voice_client_playing.pause()
                 await EmbedMessages.send_embed_msg(channel, "Siguiente canción 🦀", None)
-                MusicHandler.check_queue(channel)
+                MusicHandler.check_queue(channel,client)
             else:
                 adding_song = False
                 await EmbedMessages.send_embed_msg(channel, None, "Aqui no hay nada mi ciela 🦀")
