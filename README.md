@@ -36,7 +36,6 @@
     </li>
     <li><a href="#Uso">Uso</a></li>
     <li><a href="#Contacto">Contacto</a></li>
-    <li><a href="#Reconocimientos">Reconocimientos</a></li>
   </ol>
 </details>
 
