@@ -1,7 +1,6 @@
 # IMPORTS
 import asyncio
-import calendar
-from datetime import date, datetime
+from datetime import datetime
 from random import randint
 
 import discord
@@ -12,7 +11,7 @@ from discord.ext import tasks
 from EmbedMessages import *
 from EnvironmentVariables import *
 from HandleRoles import *
-from LevelAndCoinsSystem import *
+from LevelSystem import *
 from MusicHandler import *
 from ReplyMessages import *
 
@@ -25,27 +24,18 @@ client = discord.Client(intents=intents)
 async def on_ready():
     print('siri mais incrível do mundo\n---------------------------')
 
-# TAREA QUE SE CORRE CADA 24 HORAS, PARA HACER QUE EL BOT ENVIE UN MENSAJE TODOS LOS DIAS A UNA HORA ESPECIFICA  
+# TAREA QUE SE CORRE CADA 24 HORAS
 @tasks.loop(hours=24)
 async def called_once_a_day():
     channel = client.get_channel(LOBBY_TEXT_CHANNEL_ID)
-    random_index1 = randint(0, len(bomdia_messages) - 1)
-    random_index2 = randint(0, len(bomdia_gifs) - 1)
-    await EmbedMessages.send_embed_msg(channel,None,bomdia_messages[random_index1])
-    await channel.send(bomdia_gifs[random_index2])
-
-    #REVISAR CUMPLEAÑOS
-    users = await LevelSystem.read_users_data()
-    for user in users:
-        today = str(date.today())
-        today_no_year = today[len('YYYY-'):]
-        month_name = calendar.month_name[int(today_no_year[:len(today_no_year)-len('-DD')])]
-        mont_day = today_no_year[len('MM-'):]
-        if 'bd' in users[user] and users[user]['bd'] == month_name + " " + mont_day:
-            random_index1 = randint(0, len(cum_messsages) - 1)
-            random_index2 = randint(0, len(cum_images) - 1)
-            await EmbedMessages.send_embed_msg(channel,None,cum_messsages[random_index1] + client.get_user(int(user)).mention )
-            await channel.send(cum_images[random_index2])
+    random_chance = randint(0, 100)
+    # ENVIAR MENSAJE DIARIO
+    if random_chance > 70:
+        await AdminCommands.daily_message(channel)
+    else:
+        await AdminCommands.daily_new(channel)
+    # REVISAR SI EL DIA DE HOY CUMPLE ALGUN MIEMBRO PARA ENVIAR MENSAJE DE FELICITACION
+    await LevelSystem.check_birthday(channel,client)
 
 @called_once_a_day.before_loop
 async def before():
@@ -88,7 +78,6 @@ async def on_voice_state_update(member, before, after):
     global songs_titles
     global URL_queue
     global adding_song
-    global is_disconnected
 
     before_channel = before.channel
     after_channel = after.channel
@@ -100,8 +89,7 @@ async def on_voice_state_update(member, before, after):
             voice_client_playing = None
             songs_titles = []
             URL_queue = []
-            adding_song = False
-            is_disconnected = True        
+            adding_song = False  
 
 # SALUDAR MIEMBROS NUEVOS CUANDO ACEPTAN LAS REGLAS (CRIBADO DE MIEMBROS)
 @client.event

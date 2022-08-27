@@ -1,9 +1,20 @@
+import json
+from datetime import date, timedelta
+from random import randint
+
+import requests
+from BotTokens import EXCHANGE_RATE_TOKEN, NEWSAPI_TOKEN
 from EmbedMessages import EmbedMessages
-from EnvironmentVariables import OWNER_ID, SIRI_FAZENDO_PLATA_EMOJI, not_allowed_channel_ids
-from LevelAndCoinsSystem import LevelSystem, pending_pick
+from EnvironmentVariables import OWNER_ID, SIRI_FAZENDO_PLATA_EMOJI, bomdia_gifs, bomdia_messages, \
+    not_allowed_channel_ids
+from LevelSystem import LevelSystem, pending_pick
+from newsapi import NewsApiClient
 
 
 class AdminCommands:
+
+    # ATRIBUTOS DE CLASE
+    old_dollar = 4000
 
     async def process_commands(channel,text,original_message):
             
@@ -11,6 +22,9 @@ class AdminCommands:
 
             global pending_pick
 
+            if text.startswith('.tnews'):
+                await AdminCommands.daily_new(channel)           
+                
             # ESTE METODO SE USA PARA HACER QUE EL BOT ENVIE CUALQUER MENSAJE QUE DESEEMOS
             if text.startswith('.anuncio'):           
                 await EmbedMessages.send_embed_msg(channel,None,text[len('.anuncio' ):len(text)])
@@ -36,3 +50,54 @@ class AdminCommands:
                 password = text[len('.plant '):]
                 await original_message.delete()
                 await LevelSystem.plant_coins(channel,password,True)
+
+    async def daily_message(channel):
+        random_index1 = randint(0, len(bomdia_messages) - 1)
+        random_index2 = randint(0, len(bomdia_gifs) - 1)
+        await EmbedMessages.send_embed_msg(channel,None,bomdia_messages[random_index1])
+        await channel.send(bomdia_gifs[random_index2])
+
+    async def daily_new(channel):
+        news_API = NewsApiClient(api_key=NEWSAPI_TOKEN)
+        languages = ['en','es']
+        countries = ['us','co']
+        cateogries = ['science','health','science','technology','science','science','science']
+        random_index1 = randint(0, len(languages) - 1)
+        # /v2/top-headlines
+        top_headlines = news_API.get_top_headlines(
+            category = cateogries[randint(0, len(cateogries) - 1)],
+            language = languages[random_index1],
+            country  = countries[random_index1],
+            page=1)
+
+        denied_sites =['Semana.com','Pulzo.com','Theverge.com']
+        random_index2 = randint(0, len(top_headlines['articles'])-1)
+        source_name = top_headlines['articles'][random_index2]['source']['name']
+        if source_name.lower() not in (site.lower() for site in denied_sites):
+            random_index2 = randint(0, len(top_headlines['articles'])-1)
+            print(top_headlines['articles'][random_index2]['title'])
+            await channel.send(AdminCommands.daily_USD_to_COP(channel) + '\n\n' + '**' + top_headlines['articles'][random_index2]['title']+ '**' + '\n\n' + top_headlines['articles'][random_index2]['url'])
+        else:
+            await AdminCommands.daily_new(channel)
+    
+    def daily_USD_to_COP(channel):
+        convert_url = "https://api.apilayer.com/exchangerates_data/convert?to=COP&from=USD&amount=1"
+        payload = {}
+        headers= {"apikey": EXCHANGE_RATE_TOKEN}
+
+        convert_response = requests.request("GET", convert_url, headers=headers, data = payload)
+        json_convert_response = json.loads(convert_response.text)
+
+        today = date.today().strftime('%Y-%m-%d') 
+        yesterday = (date.today() - timedelta(days = 1)).strftime('%Y-%m-%d') 
+        url = "https://api.apilayer.com/exchangerates_data/fluctuation?start_date={}&end_date={}".format(yesterday,today)
+        change_response = requests.request("GET", url, headers=headers, data = payload)
+        json_change_response = json.loads(change_response.text)
+        change_percentage = json_change_response['rates']['COP']['change_pct']
+
+        base_message = '💵** 1 USD ** -> $ ' + str(int(json_convert_response['info']['rate'])) + '** COP**💰' + ' % ' + "{:.2f}".format(change_percentage)
+        
+        if change_percentage > 0:   
+            return( base_message+ ' 📈')
+        else:
+            return( base_message+ ' 📉')

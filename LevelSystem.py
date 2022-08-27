@@ -2,7 +2,7 @@ import asyncio
 import calendar
 import json
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 from io import BytesIO
 from random import randint
 
@@ -11,8 +11,8 @@ import requests
 from BotTokens import TENOR_TOKEN
 from EmbedMessages import EmbedMessages
 from EnvironmentVariables import COINS_PER_LVL, DUNGEON_TEXT_CHANNEL_ID, LVLUP_MESSASGES, SAFADOS_ROLE_ID, SERVER_ID, \
-    SHITPOST_TEXT_CHANNEL_ID, SIRI_CHAT_TEXT_CHANNEL_ID, SIRI_FAZENDO_PLATA_EMOJI, TITLES_PER_LVL, \
-    not_allowed_channel_ids, sassy_messages
+    SHITPOST_TEXT_CHANNEL_ID, SIRI_CHAT_TEXT_CHANNEL_ID, SIRI_FAZENDO_PLATA_EMOJI, TITLES_PER_LVL, cum_images, \
+    cum_messsages, not_allowed_channel_ids, sassy_messages
 from PIL import Image, ImageDraw, ImageFont
 
 # INICIARLIZAR VARIABLES
@@ -24,7 +24,7 @@ pick_message_object = None
 class LevelSystem:
 
     # ATRIBUTOS DE CLASE
-    chance = 0
+    chance = 5
  
     async def process_commands(channel,text,original_message,client):
         message_author = original_message.author
@@ -96,7 +96,24 @@ class LevelSystem:
             await original_message.add_reaction('☑️')
             await LevelSystem.write_users_data(users)
 
-        # LEER ARCHIVO JSON
+    #REVISAR CUMPLEAÑOS    
+    async def check_birthday(channel,client):
+        users = await LevelSystem.read_users_data()
+        for user in users:
+            today = str(date.today())
+            today_no_year = today[len('YYYY-'):]
+            month_name = calendar.month_name[int(today_no_year[:len(today_no_year)-len('-DD')])]
+            mont_day = today_no_year[len('MM-'):]
+            if 'bd' in users[user] and users[user]['bd'] == month_name + " " + mont_day:
+                random_index1 = randint(0, len(cum_messsages) - 1)
+                random_index2 = randint(0, len(cum_images) - 1)
+
+                mentione_message = await channel.send(client.get_user(int(user)).mention)
+                await EmbedMessages.send_embed_msg(channel,None,cum_messsages[random_index1] + client.get_user(int(user)).mention )
+                await channel.send(cum_images[random_index2])
+                await mentione_message.delete()
+
+    # LEER ARCHIVO JSON
     async def read_users_data():
         with open('users.json', 'r') as f:
             users = json.load(f)

@@ -14,4 +14,5 @@ pip3 install discord-components
 pip3 install -U youtube-dl
 pip3 install ffmpeg-python
 pip3 install requests
+pip3 install newsapi-python
 pip3 install --upgrade chardet
