@@ -118,9 +118,11 @@ La clase debe contener las siguientes variables:
 BOT_TOKEN = ''
 TENOR_TOKEN = ''
 NEWSAPI_TOKEN = ''
+EXCHANGE_RATE_TOKEN  = ''
 
-TENOR_TOKEN se usa para la funcionalidad de GIFs, y es una API KEY (https://tenor.com/gifapi) que deben obtener por su cuenta
-NEWSAPI_TOKEN se usa para obtener noticias y poder enviarlas como mensaje diario, y es una API KEY de google (https://newsapi.org/) que deben obtener por su cuenta
+TENOR_TOKEN se usa para la funcionalidad de GIFs y es una API KEY (https://tenor.com/gifapi)
+NEWSAPI_TOKEN se usa para obtener noticias y poder enviarlas como mensaje diario y es una API KEY de google (https://newsapi.org/)
+EXCHANGE_RATE_TOKEN se usa para obtener precios de monedas y es una API KEY disponible en (https://apilayer.com/marketplace/exchangerates_data-api)
 ```
 
 Esta sección enlista los principales frameworks, APIs y librerias utilizados para crear el proyecto:
