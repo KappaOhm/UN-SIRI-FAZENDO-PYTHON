@@ -36,7 +36,6 @@
     </li>
     <li><a href="#Uso">Uso</a></li>
     <li><a href="#Contacto">Contacto</a></li>
-    <li><a href="#Reconocimientos">Reconocimientos</a></li>
   </ol>
 </details>
 
@@ -115,11 +114,13 @@ de manera que posibles implementaciones suyas sean mas faciles de integrar al c�
 Una clase llamada - BotTokens.py - es necesaria pero no existe en el repo porque contiene el token del bot
 que debe ser privado, es decir usen su propio bot token 🤠 (proveniente de discord) 
 
-La clase debe contener dos variables:
+La clase debe contener las siguientes variables:
 BOT_TOKEN = ''
 TENOR_TOKEN = ''
+NEWSAPI_TOKEN = ''
 
-El tenor_token se usa para la funcionalidad de GIFs, es posible omitirlo
+TENOR_TOKEN se usa para la funcionalidad de GIFs, y es una API KEY (https://tenor.com/gifapi) que deben obtener por su cuenta
+NEWSAPI_TOKEN se usa para obtener noticias y poder enviarlas como mensaje diario, y es una API KEY de google (https://newsapi.org/) que deben obtener por su cuenta
 ```
 
 Esta sección enlista los principales frameworks, APIs y librerias utilizados para crear el proyecto:
@@ -130,6 +131,8 @@ Esta sección enlista los principales frameworks, APIs y librerias utilizados pa
 * [Youtube DL](https://youtube-dl.org/)
 * [FFMPEG](https://www.ffmpeg.org/)
 * [JSON](https://www.json.org/json-en.html)
+* [Google NEWS API](https://newsapi.org/)
+* [TENOR GIFS](https://tenor.com/gifapi)
 
 <p align="right">(<a href="#top">Volver arriba</a>)</p>
 
@@ -144,10 +147,6 @@ Esta sección enlista los principales frameworks, APIs y librerias utilizados pa
 
 ## Contacto
 <p align="right">(<a href="#top">Volver arriba</a>)</p>
-
-## Reconocimientos
-<p align="right">(<a href="#top">Volver arriba</a>)</p>
-
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
