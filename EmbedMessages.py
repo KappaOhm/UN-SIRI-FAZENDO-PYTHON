@@ -13,23 +13,6 @@ class EmbedMessages:
                                 color=0xFFA500)
         return await channel.send(embed=embedVar)
 
-    async def play_embed_msg(channel, title, description):
-        global last_reply_msg
-
-        def_description = description if description is not None else ''
-        def_title = title if title is not None else ''
-        embedVar = discord.Embed(title=def_title,
-                                description=def_description,
-                                color=0xFFA500)
-
-        msg = await channel.send(embed=embedVar)
-        await msg.add_reaction('⏸️')
-        await msg.add_reaction('⏭️')
-
-        if last_reply_msg is not None:
-            await last_reply_msg.clear_reactions()
-        last_reply_msg = msg 
-
     # EMBEDIDO CON LOS COMANDOS DE MUSICA AL USAR .help
     async def help_embed_msg(message):
         embedVar = discord.Embed(title="Lista de comandos",
@@ -79,3 +62,20 @@ class EmbedMessages:
         embedVar.add_field(
             name=".impar X", value="Apuesta X monedas a que un número aleatorio entre 1 y 100 será impar", inline=False)
         await message.channel.send(embed=embedVar)
+
+    async def play_embed_msg(channel, title, description):
+        global last_reply_msg
+
+        def_description = description if description is not None else ''
+        def_title = title if title is not None else ''
+        embedVar = discord.Embed(title=def_title,
+                                description=def_description,
+                                color=0xFFA500)
+
+        msg = await channel.send(embed=embedVar)
+        await msg.add_reaction('⏸️')
+        await msg.add_reaction('⏭️')
+
+        if last_reply_msg is not None:
+            await last_reply_msg.clear_reactions()
+        last_reply_msg = msg 

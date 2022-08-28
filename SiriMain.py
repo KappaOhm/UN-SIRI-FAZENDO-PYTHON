@@ -27,15 +27,15 @@ async def on_ready():
 # TAREA QUE SE CORRE CADA 24 HORAS
 @tasks.loop(hours=24)
 async def called_once_a_day():
-    channel = client.get_channel(LOBBY_TEXT_CHANNEL_ID)
-    random_chance = randint(0, 100)
-    # ENVIAR MENSAJE DIARIO
-    if random_chance > 70:
-        await AdminCommands.daily_message(channel)
-    else:
-        await AdminCommands.daily_new(channel)
+    lobby_channel = client.get_channel(LOBBY_TEXT_CHANNEL_ID)
+    fazendoplata_channel = client.get_channel(LOBBY_TEXT_CHANNEL_ID)
+    # ENVIAR MENSAJES DIARIOS
+    await AdminCommands.daily_message(lobby_channel)
+    # await AdminCommands.daily_new(fazendoplata_channel)
+    EmbedMessages.send_embed_msg(fazendoplata_channel,None,AdminCommands.daily_USD_to_COP())
+    
     # REVISAR SI EL DIA DE HOY CUMPLE ALGUN MIEMBRO PARA ENVIAR MENSAJE DE FELICITACION
-    await LevelSystem.check_birthday(channel,client)
+    await LevelSystem.check_birthday(lobby_channel,client)
 
 @called_once_a_day.before_loop
 async def before():

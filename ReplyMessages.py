@@ -1,3 +1,5 @@
+import json
+from io import BytesIO
 from random import randint
 
 import discord
@@ -6,6 +8,7 @@ from BotTokens import TENOR_TOKEN
 from EmbedMessages import EmbedMessages
 from EnvironmentVariables import ALT_RED_ROOM_TEXT_CHANNEL_ID, OWNER_ID, RED_ROOM_TEXT_CHANNEL_ID, context, contexto, \
     redroom_responses
+from PIL import Image, ImageDraw, ImageFont
 
 
 class ReplyMessages:
@@ -13,6 +16,9 @@ class ReplyMessages:
     async def process_messages(channel,text,original_message):
 
         text_lowercase = text.lower()
+
+        if text.startswith('.anal'):
+            await ReplyMessages.image_analysis(channel) 
         
         if text.startswith('.gif'):
             search_term = text[5:]
@@ -106,3 +112,53 @@ class ReplyMessages:
             except:
                 await original_message.author.send(
                     'ocurrió un errorsinho con el comando "' + text + '" - escribe bien esa mondá🦀🔪')    
+
+    async def image_analysis(channel):
+        if channel.last_message.reference is not None:
+            try:
+                img_url = channel.last_message.reference.resolved.attachments[0].url
+                api_url = "https://emotion-detection2.p.rapidapi.com/emotion-detection"
+                payload = {"url": img_url}
+                headers = {
+                    "content-type": "application/json",
+                    "X-RapidAPI-Key": "99e3481a54msh7e9ce20b8b543d6p17327ejsn788e1fa0653b",
+                    "X-RapidAPI-Host": "emotion-detection2.p.rapidapi.com"
+                }
+                
+                response = requests.request("POST", api_url, json=payload, headers=headers)
+                json_response = json.loads(response.text)
+                image = Image.open(BytesIO(requests.get(img_url).content))
+                width, height = image.size
+                # BORRAR MENSAJE QUE LLAMÓ AL COMANDO
+                await channel.delete_messages([discord.Object(id=channel.last_message_id)])
+                for object in json_response:
+                    probability = object['emotion']['probability']*100
+                    text_to_show = object['emotion']['value']+ "\n" + str("{:.2f}".format(probability))+"%"
+                    
+                    probability_int = int(probability)
+                    if probability_int < 80 and probability_int > 55:
+                        fill_color= 'gold'
+                    elif probability_int > 80:
+                        fill_color= 'limegreen'
+                    else:
+                        fill_color= 'crimson'
+
+                    x1=int(object['rectangle']['left'])
+                    x2=int(object['rectangle']['right'])
+                    y1=int(object['rectangle']['top'])
+                    y2=int(object['rectangle']['bottom'])
+                    
+                    drawOnImage=ImageDraw.Draw(image)
+                    drawOnImage.rectangle([(x1,y1),(x2,y2)],outline=fill_color,fill=None,width=2)
+                    font_size = int(width*0.05)
+                    text_font = ImageFont.truetype("impact.ttf", font_size)
+                    
+                    x_text = x1 +(x2-x1)/4
+                    y_text = y1 +(y2-y1)/2
+                    drawOnImage.text(xy=(x_text,y_text), text=text_to_show, fill=fill_color, stroke_fill=(0,0,0), stroke_width=1,font=text_font)
+                    
+                image.save("lastanal.png")
+                await channel.send(file=discord.File('lastanal.png'))
+            except Exception as error:
+                await EmbedMessages.send_embed_msg(channel,None,"⛔ No se pudo procesar la imagen, rostro no detectado ⛔")
+                print(error)
