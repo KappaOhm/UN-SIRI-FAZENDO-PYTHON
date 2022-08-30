@@ -147,7 +147,7 @@ class MusicHandler:
         message_author = original_message.author
         
         # COMANDO PLAY
-        if text.startswith('.play') or (text.startswith('.p') and ".par" not in text and ".plant" not in text and ".pick" not in text) and (channel.id == SIRI_CHAT_TEXT_CHANNEL_ID):
+        if (text.startswith('.play') or text.startswith('.p ')) and channel.id == SIRI_CHAT_TEXT_CHANNEL_ID:
 
             if message_author.voice is None:
                 await EmbedMessages.send_embed_msg(channel, None, "No estas en un canal de voz 🦀")

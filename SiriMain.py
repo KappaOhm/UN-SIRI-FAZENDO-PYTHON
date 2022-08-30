@@ -32,7 +32,7 @@ async def called_once_a_day():
     # ENVIAR MENSAJES DIARIOS
     await AdminCommands.daily_message(lobby_channel)
     # await AdminCommands.daily_new(fazendoplata_channel)
-    EmbedMessages.send_embed_msg(fazendoplata_channel,None,AdminCommands.daily_USD_to_COP())
+    await EmbedMessages.send_embed_msg(fazendoplata_channel,None,AdminCommands.daily_USD_to_COP())
     
     # REVISAR SI EL DIA DE HOY CUMPLE ALGUN MIEMBRO PARA ENVIAR MENSAJE DE FELICITACION
     await LevelSystem.check_birthday(lobby_channel,client)
