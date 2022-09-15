@@ -14,8 +14,7 @@ from PIL import Image, ImageDraw, ImageFont
 class ReplyMessages:
 
     async def process_messages(channel,text,original_message):
-
-        text_lowercase = text.lower()
+        text = text.lower()
 
         if text.startswith('.anal'):
             await ReplyMessages.image_analysis(channel) 
@@ -61,34 +60,34 @@ class ReplyMessages:
                     message_to_reply = await channel.fetch_message(original_message.id)
                     await message_to_reply.reply(redroom_responses[random_index])
 
-        if text_lowercase.startswith('siri'):
+        if text.startswith('siri'):
             await channel.send('eu estou fazendo barra')
             await original_message.add_reaction('🦀')
 
-        if text_lowercase.startswith('hable paisa'):
+        if text.startswith('hable paisa'):
             await channel.send('eso si jamaaaaaas')
 
-        if text_lowercase.endswith('verde'):
+        if text.endswith('verde'):
             await channel.send('agache y me lo muerde 🦀')
 
-        if text_lowercase.endswith('contexto'):
+        if text.endswith('contexto'):
             random_index = randint(0, len(contexto) - 1)
             await channel.send(contexto[random_index])
 
-        if text_lowercase.endswith('context'):
+        if text.endswith('context'):
             random_index = randint(0, len(context) - 1)
             await channel.send(context[random_index])
 
-        if text_lowercase.endswith('complejo'):
+        if text.endswith('complejo'):
             await channel.send('complejo como mi cangrejo 🥵')
 
-        if text_lowercase == 'ocho' or text == '8' or text == '7+1' or text == '7 + 1':
+        if text == 'ocho' or text == '8' or text == '7+1' or text == '7 + 1':
             await channel.send('por el culo te la enclocho 🤠')
 
-        if text_lowercase == 'cinco'  or text == '5' or text == '4+1' or text == '4 + 1':
+        if text == 'cinco'  or text == '5' or text == '4+1' or text == '4 + 1':
             await channel.send('por el culo te la hinco 🤠')
 
-        if text_lowercase == 'mamelo' or text_lowercase == 'mamalo' or text_lowercase == 'a mamarlo' or text_lowercase == 'me lo mama' or text_lowercase == 'me lo tiene que mamar':
+        if text == 'mamelo' or text == 'mamalo' or text == 'a mamarlo' or text == 'me lo mama' or text == 'me lo tiene que mamar':
             await original_message.add_reaction('🅰️')
             await original_message.add_reaction('🅱️')
             await original_message.add_reaction('🇪')

@@ -27,6 +27,7 @@ class LevelSystem:
     chance = 5
  
     async def process_commands(channel,text,original_message,client):
+        text = text.lower()
         message_author = original_message.author
 
         # SISTEMA DE XP POR MENSAJES
@@ -69,7 +70,26 @@ class LevelSystem:
         # COMANDO APOSTAR POR IMPAR
         if text.startswith('.impar') and channel.id == SIRI_CHAT_TEXT_CHANNEL_ID:
             await LevelSystem.bet_par_impar(original_message, 1)
-            
+
+        # COMANDO PARA DAR MONEDAS A OTRO USUARIO
+        if text.startswith('.give'):
+            users = await LevelSystem.read_users_data()
+            number_of_coins = int(text[len('.give '):text.index("<")])   
+            receiver = original_message.mentions[0] 
+            giver = original_message.author
+            if (number_of_coins<0):
+                await EmbedMessages.send_embed_msg(channel, None, "No puedes dar monedas negativas o_o " + giver.mention)
+                return
+            if(users[str(giver.id)]['coins'] < number_of_coins):
+                await EmbedMessages.send_embed_msg(channel, None, "No tienes suficientes monedas para dar " + giver.mention)
+            elif (receiver.id != giver.id):
+                users[str(receiver.id)]['coins'] += number_of_coins
+                users[str(giver.id)]['coins'] -= number_of_coins
+                await EmbedMessages.send_embed_msg(channel, None, giver.mention + " ¡Te ha otorgado " + str(number_of_coins) + "" + SIRI_FAZENDO_PLATA_EMOJI + " monedas! " + receiver.mention)
+                await LevelSystem.write_users_data(users)
+                await original_message.delete()
+            else:
+                await EmbedMessages.send_embed_msg(channel, None, "¿Quién hptas dijo que uno se daba monedas así mismo? " + giver.mention)
         # SETEAR UN CUMPLEAÑOS
         if text.startswith('.setcum'):
             try:

@@ -20,7 +20,7 @@ class AdminCommands:
             global pending_pick
 
             if text.startswith('.tnews'):
-                await AdminCommands.daily_new(channel)           
+                await AdminCommands.daily_new(channel)
                 
             # ESTE METODO SE USA PARA HACER QUE EL BOT ENVIE CUALQUER MENSAJE QUE DESEEMOS
             if text.startswith('.anuncio'):           
@@ -87,12 +87,15 @@ class AdminCommands:
 
         today = date.today().strftime('%Y-%m-%d') 
         yesterday = (date.today() - timedelta(days = 2)).strftime('%Y-%m-%d') 
-        url = "https://api.apilayer.com/exchangerates_data/fluctuation?start_date={}&end_date={}".format(yesterday,today)
+        url = "https://api.apilayer.com/exchangerates_data/timeseries?start_date={}&end_date={}".format(yesterday,today)
         change_response = requests.request("GET", url, headers=headers, data = payload)
         json_change_response = json.loads(change_response.text)
-        change_percentage = json_change_response['rates']['COP']['change_pct']
+        today_rate=int(json_change_response['rates'][today]['COP'])
+        yesterday_rate=int(json_change_response['rates'][yesterday]['COP'])
+        change_percentage = ((today_rate-yesterday_rate)/yesterday_rate)*100
 
-        base_message = '💵** 1 USD ** -> $ ' + str(int(json_convert_response['info']['rate'])) + '** COP**💰' + ' % ' + "{:.2f}".format(change_percentage)
+
+        base_message = '💵** 1 USD ** -> $ ' + str(int(json_change_response['rates'][today]['COP'])) + '** COP**💰' + ' % ' + "{:.2f}".format(change_percentage)
         
         if change_percentage > 0:   
             return( base_message+ ' 📈')

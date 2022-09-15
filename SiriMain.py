@@ -28,7 +28,7 @@ async def on_ready():
 @tasks.loop(hours=24)
 async def called_once_a_day():
     lobby_channel = client.get_channel(LOBBY_TEXT_CHANNEL_ID)
-    fazendoplata_channel = client.get_channel(LOBBY_TEXT_CHANNEL_ID)
+    fazendoplata_channel = client.get_channel(FAZENDOPLATA_TEXT_CHANNEL_ID)
     # ENVIAR MENSAJES DIARIOS
     await AdminCommands.daily_message(lobby_channel)
     # await AdminCommands.daily_new(fazendoplata_channel)
@@ -50,10 +50,10 @@ async def before():
     await asyncio.sleep(hours_left*60*60)
     print("Mensaje diario enviado")
 
+
 # FUNCIONES CON MENSAJES DE TEXTO EN CANALES
 @client.event
 async def on_message(original_message):
-    global chance
     global pending_pick
 
     text = original_message.content
@@ -89,7 +89,7 @@ async def on_voice_state_update(member, before, after):
             voice_client_playing = None
             songs_titles = []
             URL_queue = []
-            adding_song = False  
+            adding_song = False
 
 # SALUDAR MIEMBROS NUEVOS CUANDO ACEPTAN LAS REGLAS (CRIBADO DE MIEMBROS)
 @client.event

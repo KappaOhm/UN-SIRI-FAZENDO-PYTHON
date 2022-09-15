@@ -103,7 +103,7 @@ bomdia_messages = [
     '¡Hola Bom Día!⭐',
     'Eu gostaria que você pudesse desfrutar de um dia inesquecível. Com esta mensagem, eu não só lhe desejo um bom dia, mas também desejo que possamos nos ver o mais rapidamente possível, para que os segundos parem de parecer horas🐒',
     '🦄Problemas, trabalho, dificuldades, decepção … tudo ao seu lado parece uma miniatura, já que só penso em poder estar em seus braços para poder desfrutar do nosso amor juntos. Por esta razão, quero desejar-lhe a minha vida desde o primeiro minuto🦄',
-    '🦀Obrigado por tornar cada despertar mais bonito que o anterior, bom dia a todos.🦀',
+    '🦀Obrigado por tornar cada despertar mais bonito que o anterior, bom dia a todos.',
     '🐢Se eu não digo bom dia para você todos os dias, é como se eu estivesse perdendo alguma coisa na minha vida e eu não pudesse aproveitar o dia🐢',
     '🐒Se você quer ser feliz, você tem que fazer os outros felizes. E contanto que você faça isso feliz você será🐒',
     '☀️Cada belo trabalho é construído lentamente. Bom día☀️',
@@ -124,13 +124,13 @@ bomdia_messages = [
     '🐌Ter um amigo como você é mais do que uma bênção. Graças a você posso me levantar de manhã e começar este dia com um sorriso e com a motivação para realizar meus sonhos🐌'
     '🍉Tudo o que a mente humana pode conceber, ela pode conquistar🍉',
     '🌼Você não pode mudar o vento, mas pode pode ajustar as velas do barco para chegar onde quer🌼',
-    '🌼O sol nasce em mais um novo dia que espero que seja fantástico para você. Aproveite para vivê-la ao máximo, fazendo o que te faz feliz. Bom Dia!🌼'
+    '🌼O sol nasce em mais um novo dia que espero que seja fantástico para você. Aproveite para vivê-la ao máximo, fazendo o que te faz feliz. Bom Dia!🌼',
     '🐸E quando você pensar em desistir, lembre-se dos motivos que te fizeram aguentar até agora🐸',
     '🌺As dificultades incentivam a perseverança. A perseverança gera força. A força nos torna implacáveis. Nunca desista🌺',
     '🌕Não diga eu te amo como se fosse um bom dia, diga bom dia como se fosse um eu te amo🌕',
     '🎃A primeira obrigação de todo ser humano é ser feliz, a segunda é fazer os outros felizes. Bom Dia!',
     '🌱Se você quer que seus sonhos se tornem realidade, o primeiro passo é levantar! Bom Dia!',
-    '💓Abra seu coração para as maravilhas do dia que se inicia e sua vida se encherá de alegria, carinho e felicidade💓'
+    '💓Abra seu coração para as maravilhas do dia que se inicia e sua vida se encherá de alegria, carinho e felicidade💓',
     '🍉Parece que a vida me devia algo e me pagou com sua linda amizade. Feliz Dia!',
     '🌼Muito bom dia! Espero que seja tão bonito para você quanto seu sorriso é para os outros🌼',
     '🌺Desejo a você toda felicidade e amor do mundo, um lindo dia, e que tudo seja lindo e positivo. Eu te amo muito e tenha um feliz dia🌺',

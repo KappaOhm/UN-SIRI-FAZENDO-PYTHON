@@ -6,7 +6,6 @@ from EmbedMessages import EmbedMessages
 from EnvironmentVariables import FFMPEG_OPTIONS, SECONDS_TO_DISCONNECT, SIRI_CHAT_TEXT_CHANNEL_ID, YDL_OPTIONS
 from youtube_dl import YoutubeDL
 
-# INICIARLIZAR VARIABLES
 voice_client_playing = None
 adding_song = False
 is_playlist = False
@@ -19,11 +18,19 @@ class MusicHandler:
     # DESCONECTAR EL BOT SI DADOS X SEGUNDOS NO HA REPRODUCIDO AUDIO
     async def auto_disconnect(channel):
         global voice_client_playing
+        global songs_titles
+        global URL_queue
+        global adding_song
         await asyncio.sleep(SECONDS_TO_DISCONNECT)
         if voice_client_playing is not None and not voice_client_playing.is_playing():
-            await EmbedMessages.send_embed_msg(channel, None, "Me voy por inactividad ⏱️")
+            voice_client_playing.stop()
             await voice_client_playing.disconnect() 
-
+            voice_client_playing = None
+            adding_song = False
+            songs_titles = []
+            URL_queue = []
+            await EmbedMessages.send_embed_msg(channel, None, "Me voy por inactividad ⏱️")
+            
     # MANEJO DE COLA PARA CANCIONES
     def add_to_queue(adding_song, URL):
         global URL_queue
@@ -249,14 +256,7 @@ class MusicHandler:
 
         # COMANDO LEAVE
         if text == '.leave' and (channel.id == SIRI_CHAT_TEXT_CHANNEL_ID):
-            is_disconnected = False
             if voice_client_playing is not None:
-                songs_titles = []
-                URL_queue = []
                 voice_client_playing.stop()
                 await voice_client_playing.disconnect()
-                voice_client_playing = None
-                adding_song = False
-                is_disconnected = True
-            if is_disconnected:
                 await EmbedMessages.send_embed_msg(channel, None,"Ah pero ya me echaron, todo bien🦀🔪")
