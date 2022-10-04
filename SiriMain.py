@@ -31,7 +31,6 @@ async def called_once_a_day():
     fazendoplata_channel = client.get_channel(FAZENDOPLATA_TEXT_CHANNEL_ID)
     # ENVIAR MENSAJES DIARIOS
     await AdminCommands.daily_message(lobby_channel)
-    # await AdminCommands.daily_new(fazendoplata_channel)
     await EmbedMessages.send_embed_msg(fazendoplata_channel,None,AdminCommands.daily_USD_to_COP())
     
     # REVISAR SI EL DIA DE HOY CUMPLE ALGUN MIEMBRO PARA ENVIAR MENSAJE DE FELICITACION
@@ -83,8 +82,6 @@ async def on_voice_state_update(member, before, after):
     after_channel = after.channel
 
     if member.id == BOT_ID:
-        if after.mute == True or after.suppress == True:
-            await member.edit(mute=False)
         if before_channel is not None and after_channel is None:
             voice_client_playing = None
             songs_titles = []
@@ -108,8 +105,7 @@ async def on_member_update(memberBefore, memberAfter):
 # AGREGAR O QUITAR ROLES CON REACCIONES
 @client.event
 async def on_raw_reaction_add(payload):
-    is_for_roles = not payload.user_id == BOT_ID and payload.emoji.name != '⏭️' and payload.emoji.name !='⏸️' and payload.emoji.name !='▶️'
-    
+    is_for_roles = MusicHandler.detect_music_reaction(payload)
     if is_for_roles :
         await HandleRoles.remove_or_add_role(client,payload,True)
     else:
@@ -117,8 +113,7 @@ async def on_raw_reaction_add(payload):
 
 @client.event
 async def on_raw_reaction_remove(payload):
-    is_for_roles = not payload.user_id == BOT_ID and payload.emoji.name != '⏭️' and payload.emoji.name !='⏸️' and payload.emoji.name !='▶️'
-
+    is_for_roles = MusicHandler.detect_music_reaction(payload)
     if is_for_roles:
         await HandleRoles.remove_or_add_role(client,payload,False)
 

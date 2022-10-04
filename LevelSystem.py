@@ -189,7 +189,7 @@ class LevelSystem:
             
                 message_author = original_message.author
                 
-                if  text.startswith(".pick") and (randint(1, 100) > 85 ):
+                if  text.startswith(".pick") and (randint(1, 100) > 91 ):
                     random_index = randint(0, len(sassy_messages) - 1)
                     await original_message.reply(sassy_messages[random_index])
                     

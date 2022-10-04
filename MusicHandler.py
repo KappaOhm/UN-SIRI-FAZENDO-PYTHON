@@ -3,7 +3,7 @@ from random import shuffle
 
 import discord
 from EmbedMessages import EmbedMessages
-from EnvironmentVariables import FFMPEG_OPTIONS, SECONDS_TO_DISCONNECT, SIRI_CHAT_TEXT_CHANNEL_ID, YDL_OPTIONS
+from EnvironmentVariables import BOT_ID, FFMPEG_OPTIONS, SECONDS_TO_DISCONNECT, SIRI_CHAT_TEXT_CHANNEL_ID, YDL_OPTIONS
 from youtube_dl import YoutubeDL
 
 voice_client_playing = None
@@ -142,6 +142,10 @@ class MusicHandler:
             await message.add_reaction('⏭️')
 
             voice_client_playing.resume()
+
+    def detect_music_reaction(payload):
+        return not payload.user_id == BOT_ID and payload.emoji.name != '⏭️' and payload.emoji.name !='⏸️' and payload.emoji.name !='▶️'
+    
 
     # LEER MENSAJES DE TEXTO PARA VERIFICAR COMANDOS DE MUSICA
     async def process_commands(channel,text,original_message,client):
