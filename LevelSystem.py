@@ -41,10 +41,11 @@ class LevelSystem:
 
             # PLANTAR MONEDAS CON CIERTA PROPABILIDAD CADA VEZ QUE SE ENVIA UN MENSAJE
             await LevelSystem.plant_coins(channel,None,False)
-                
-            await LevelSystem.update_data(users, str(message_author.id))
-            await LevelSystem.add_experience(users, str(message_author.id), xp_points)
-            await LevelSystem.level_up(users, message_author, channel,client)
+            user_id = str(message_author.id)
+            await LevelSystem.update_data(users, user_id)
+            if users[user_id]['level'] != 30:
+                await LevelSystem.add_experience(users, user_id, xp_points)
+                await LevelSystem.level_up(users, message_author, channel,client)
 
             await LevelSystem.write_users_data(users)
 
