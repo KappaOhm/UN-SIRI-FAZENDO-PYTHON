@@ -23,6 +23,10 @@ class AdminCommands:
 
             if text.startswith('.ttest'):
                 await EmbedMessages.send_embed_msg(channel,None,AdminCommands.daily_USD_to_COP())
+
+            if text.startswith('.setusd'):
+                AdminCommands.cache_rate = int(text[len('.setusd ' ):len(text)])
+                await original_message.add_reaction('✨')
                 
             # ESTE METODO SE USA PARA HACER QUE EL BOT ENVIE CUALQUER MENSAJE QUE DESEEMOS
             if text.startswith('.anuncio'):           
@@ -76,7 +80,9 @@ class AdminCommands:
         
         base_message = '💵** 1 USD ** -> $ ' + str(today_rate) + '** COP**💰' + ' % ' + "{:.2f}".format(change_percentage)
         
-        if change_percentage > 0:   
+        if change_percentage > 0.00:
             return( base_message+ ' 📈')
+        elif change_percentage == 0.00:
+            return( base_message)
         else:
             return( base_message+ ' 📉')
