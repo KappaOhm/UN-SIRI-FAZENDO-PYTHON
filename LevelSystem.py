@@ -95,19 +95,22 @@ class LevelSystem:
         if text.startswith('.setcum'):
             try:
                 users = await LevelSystem.read_users_data()
-                bd_date = text[len('.setcum '):]
+                bd_date = text[len(text)-len('DD-MM'):]
                 month_number = int(bd_date[len('DD-'):])
                 month_name = calendar.month_name[month_number]
                 mont_day = bd_date[:len('DD')]
                 datetime(2000,month_number,int(mont_day))
                 user = original_message.mentions[0] if original_message.mentions else message_author
-                users[str(user.id)]['bd'] = month_name + " " + mont_day
-                await original_message.add_reaction('🎂')
-                await original_message.add_reaction('✨')
-                await LevelSystem.write_users_data(users)
-                await LevelSystem.check_xp(None, user, channel)
+                if str(user.id) in users:
+                    users[str(user.id)]['bd'] = month_name + " " + mont_day
+                    await original_message.add_reaction('🎂')
+                    await original_message.add_reaction('✨')
+                    await LevelSystem.write_users_data(users)
+                    await LevelSystem.check_xp(None, user, channel)
+                else:
+                    await EmbedMessages.send_embed_msg(channel, None, "No se encontró el usuario, quizás aún no acumula XP")
             except :
-                await EmbedMessages.send_embed_msg(channel, None, "Ocurrió un error, quizas NO usaste una fecha válida o el formato adecuado u.u")
+                await EmbedMessages.send_embed_msg(channel, None, "Ocurrió un error, quizás NO usaste una fecha válida o el formato adecuado u.u")
 
         # ELIMINAR UN CUMPLEAÑOS
         if text.startswith('.deletecum'):
