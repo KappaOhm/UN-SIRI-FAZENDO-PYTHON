@@ -32,8 +32,6 @@ async def called_once_a_day():
     # ENVIAR MENSAJES DIARIOS
     await AdminCommands.daily_message(lobby_channel)
     await EmbedMessages.send_embed_msg(fazendoplata_channel,None,AdminCommands.daily_USD_to_COP())
-    
-    # REVISAR SI EL DIA DE HOY CUMPLE ALGUN MIEMBRO PARA ENVIAR MENSAJE DE FELICITACION
     await LevelSystem.check_birthday(lobby_channel,client)
 
 @called_once_a_day.before_loop
@@ -61,6 +59,9 @@ async def on_message(original_message):
     
     # IGNORAR MENSAJES DE BOTS, TANTO SIRI COMO OTROS BOTS
     if message_author == client.user or message_author.bot:
+        return
+    # ESTO ES UNA TREMENDA ESTUPIDEZ. DISCORD ASUME UNOS CANALES DE TEXTO COMO "VOICE CHANNEL"
+    if channel.type[0] != "text":
         return
 
     # ELSE, EL MENSAJE NO VIENE DE NINGUN BOT

@@ -202,7 +202,7 @@ class MusicHandler:
                         if error.__context__ is not None and error.__context__.args is not None:
                             mensaje = error.__context__.args[0]
                         else:
-                            mensaje = "Lo siento, ocurrió un error y es culpa de YouTube u.u"
+                            mensaje = "Lo siento, ocurrió un error : " + error
                         print(error)
                         await EmbedMessages.send_embed_msg(channel, "Error", mensaje)
 
@@ -263,4 +263,8 @@ class MusicHandler:
             if voice_client_playing is not None:
                 voice_client_playing.stop()
                 await voice_client_playing.disconnect()
+                voice_client_playing = None
+                adding_song = False
+                songs_titles = []
+                URL_queue = []
                 await EmbedMessages.send_embed_msg(channel, None,"Ah pero ya me echaron, todo bien🦀🔪")

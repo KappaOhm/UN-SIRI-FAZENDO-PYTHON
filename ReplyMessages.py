@@ -61,8 +61,11 @@ class ReplyMessages:
                     await message_to_reply.reply(redroom_responses[random_index])
 
         if text.startswith('siri'):
-            await channel.send('eu estou fazendo barra')
             await original_message.add_reaction('🦀')
+
+        if text == 'siri':
+            await channel.send('eu estou fazendo barra')
+            await original_message.add_reaction('🦀')   
 
         if text.startswith('hable paisa'):
             await channel.send('eso si jamaaaaaas')

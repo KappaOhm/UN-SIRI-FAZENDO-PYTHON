@@ -24,7 +24,7 @@ pick_message_object = None
 class LevelSystem:
 
     # ATRIBUTOS DE CLASE
-    chance = 5
+    chance = 4
  
     async def process_commands(channel,text,original_message,client):
         text = text.lower()
@@ -129,13 +129,15 @@ class LevelSystem:
             month_name = calendar.month_name[int(today_no_year[:len(today_no_year)-len('-DD')])]
             mont_day = today_no_year[len('MM-'):]
             if 'bd' in users[user] and users[user]['bd'] == month_name + " " + mont_day:
-                random_index1 = randint(0, len(cum_messsages) - 1)
-                random_index2 = randint(0, len(cum_images) - 1)
+                guild = client.get_guild(SERVER_ID)
+                if await guild.fetch_member(user):
+                    random_index1 = randint(0, len(cum_messsages) - 1)
+                    random_index2 = randint(0, len(cum_images) - 1)
 
-                mentione_message = await channel.send(client.get_user(int(user)).mention)
-                await EmbedMessages.send_embed_msg(channel,None,cum_messsages[random_index1] + client.get_user(int(user)).mention )
-                await channel.send(cum_images[random_index2])
-                await mentione_message.delete()
+                    mentione_message = await channel.send(client.get_user(int(user)).mention)
+                    await EmbedMessages.send_embed_msg(channel,None,cum_messsages[random_index1] + client.get_user(int(user)).mention )
+                    await channel.send(cum_images[random_index2])
+                    await mentione_message.delete()
 
     # LEER ARCHIVO JSON
     async def read_users_data():
