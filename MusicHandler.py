@@ -2,9 +2,12 @@ import asyncio
 from random import shuffle
 
 import discord
-from EmbedMessages import EmbedMessages
-from EnvironmentVariables import BOT_ID, FFMPEG_OPTIONS, SECONDS_TO_DISCONNECT, SIRI_CHAT_TEXT_CHANNEL_ID, YDL_OPTIONS
 from yt_dlp import YoutubeDL
+
+from EmbedMessages import EmbedMessages
+from EnvironmentVariables import (BOT_ID, FFMPEG_OPTIONS,
+                                  SECONDS_TO_DISCONNECT,
+                                  SIRI_CHAT_TEXT_CHANNEL_ID, YDL_OPTIONS)
 
 voice_client_playing = None
 adding_song = False
@@ -89,7 +92,7 @@ class MusicHandler:
             else:
                 new_url_song = info['entries'][0]['webpage_url']
                 new_info = ydl.extract_info(new_url_song, download=False)
-                URL = new_info['formats'][0]['url']
+                URL = new_info['url']
                 songs_titles.append(new_info['title'])
 
             if is_playlist:
