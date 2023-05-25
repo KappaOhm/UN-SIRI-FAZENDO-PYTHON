@@ -4,7 +4,7 @@ from random import shuffle
 import discord
 from EmbedMessages import EmbedMessages
 from EnvironmentVariables import BOT_ID, FFMPEG_OPTIONS, SECONDS_TO_DISCONNECT, SIRI_CHAT_TEXT_CHANNEL_ID, YDL_OPTIONS
-from youtube_dl import YoutubeDL
+from yt_dlp import YoutubeDL
 
 voice_client_playing = None
 adding_song = False
@@ -79,11 +79,11 @@ class MusicHandler:
                 if 'entries' in info:
                     is_playlist = True
                     for i in info['entries']:
-                        URL = i['formats'][0]['url']
+                        URL = i['url']
                         songs_titles.append(i.get('title', None))
                         URL_queue.append(URL)
                 else:
-                    URL = info['formats'][0]['url']
+                    URL = info['url']
                     songs_titles.append(info.get('title', None))
 
             else:
@@ -201,8 +201,10 @@ class MusicHandler:
 
                         if error.__context__ is not None and error.__context__.args is not None:
                             mensaje = error.__context__.args[0]
+                        elif error.args is not None:
+                            mensaje = error.args[0]
                         else:
-                            mensaje = "Lo siento, ocurrió un error : " + error
+                            mensaje = "Lo siento, ocurrió un error : " + error.__cause__
                         print(error)
                         await EmbedMessages.send_embed_msg(channel, "Error", mensaje)
 
