@@ -32,15 +32,12 @@ async def on_ready():
 
 @tasks.loop(hours=24)
 async def called_once_a_day():
-    try:
-        lobby_channel = client.get_channel(LOBBY_TEXT_CHANNEL_ID)
-        fazendoplata_channel = client.get_channel(FAZENDOPLATA_TEXT_CHANNEL_ID)
-        # ENVIAR MENSAJES DIARIOS
-        await AdminCommands.daily_message(lobby_channel)
-        await EmbedMessages.send_embed_msg(fazendoplata_channel, None, AdminCommands.daily_USD_to_COP())
-        await LevelSystem.check_birthday(lobby_channel, client)
-    except:
-        print("error")
+    lobby_channel = client.get_channel(LOBBY_TEXT_CHANNEL_ID)
+    fazendoplata_channel = client.get_channel(FAZENDOPLATA_TEXT_CHANNEL_ID)
+    # ENVIAR MENSAJES DIARIOS
+    await AdminCommands.daily_message(lobby_channel)
+    await EmbedMessages.send_embed_msg(fazendoplata_channel, None, AdminCommands.daily_USD_to_COP())
+    await LevelSystem.check_birthday(lobby_channel, client)
 
 
 @called_once_a_day.before_loop
@@ -70,18 +67,23 @@ async def on_message(original_message):
     # IGNORAR MENSAJES DE BOTS, TANTO SIRI COMO OTROS BOTS
     if message_author == client.user or message_author.bot:
         return
-    # ESTO ES UNA TREMENDA ESTUPIDEZ. DISCORD ASUME UNOS CANALES DE TEXTO COMO "VOICE CHANNEL"
+        # ESTO ES UNA TREMENDA ESTUPIDEZ. DISCORD ASUME UNOS CANALES DE TEXTO COMO "VOICE CHANNEL"
     if channel.type[0] != "text":
         return
 
+    if text.startswith('.tday'):
+        lobby_channel = client.get_channel(LOBBY_TEXT_CHANNEL_ID)
+        await AdminCommands.daily_message(lobby_channel)
+        await LevelSystem.check_birthday(lobby_channel, client)
     # ELSE, EL MENSAJE NO VIENE DE NINGUN BOT
     await ReplyMessages.process_messages(channel, text, original_message)
     await AdminCommands.process_commands(channel, text, original_message)
     await MusicHandler.process_commands(channel, text, original_message, client)
     await LevelSystem.process_commands(channel, text, original_message, client)
 
-
 # CONECTAR BOT AL VOICE Y LIMPIAR VARIABLES CUANDO SE DESCONECTA DE CUALQUIER CANAL DE VOZ
+
+
 @client.event
 async def on_voice_state_update(member, before, after):
     global voice_client_playing

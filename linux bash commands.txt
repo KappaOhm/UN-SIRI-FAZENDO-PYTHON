@@ -2,6 +2,7 @@
 nohup python -u SiriMain.py &
 nohup python3 -u SiriMain.py &
 nohup python3.9 -u SiriMain.py &
+nohup python3.9 -u SiriMain.py > /home/ubuntu/logging.out &
 
 ** prints running processes to be able to stop the bot process
 ps -ef | grep python

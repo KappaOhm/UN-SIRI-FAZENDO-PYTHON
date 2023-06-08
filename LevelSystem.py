@@ -305,7 +305,7 @@ class LevelSystem:
 
             embedVar = discord.Embed(
                 title=user.display_name, description='', color=0xFFA500)
-            embedVar.set_thumbnail(url=user.avatar_url)
+            embedVar.set_thumbnail(url=user.avatar)
             embedVar.add_field(name=title_in_level, value = "XP : " + str(user_xp), inline=True)
             embedVar.add_field(name="Monedas :", value = str(users[str(user.id)]['coins']) + SIRI_FAZENDO_PLATA_EMOJI, inline=True)
             if 'bd' in users[str(user.id)]:
@@ -348,7 +348,7 @@ class LevelSystem:
                     users[str(leader['user_id'])]['coins']) + SIRI_FAZENDO_PLATA_EMOJI
                 embedVar.add_field(name=name, value=value, inline=False)
                 if x == 1:
-                    embedVar.set_thumbnail(url=current_user.avatar_url)
+                    embedVar.set_thumbnail(url=current_user.avatar)
                 x += 1
                 # CALCULAR SOLO LOS 10 PRIMEROS
                 if x == 11:
